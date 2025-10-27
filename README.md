@@ -1,0 +1,1 @@
+Quoridor játék, programozás alapjai 3 tárgy nagyházifeladat.
