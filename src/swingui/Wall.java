@@ -1,0 +1,91 @@
+package swingui;
+
+import java.awt.*;
+import javax.swing.JButton;
+
+import grid.GameData;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+public class Wall extends JButton {
+
+    private int posx;
+    private int posy;
+    private boolean vertical;
+
+    /*public class MouseClickListener extends MouseAdapter{
+        @Override 
+        public void mouseClicked(MouseEvent e){
+            refreshColor();
+        }
+    }*/
+
+    public class ClickWall implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e){
+            if(posx<8 && posy < 8){
+                if(vertical){
+                    GameData.verticalWalls.get(posx).set(posy, true);
+                }
+                else{
+                    GameData.horizontalWalls.get(posx).set(posy, true);
+                }
+            }
+            refreshColor();
+            JButton bt = (JButton)e.getSource();
+            Board b = (Board)bt.getParent();
+            b.refresh();
+        }
+    }
+
+    public Wall(int row, int col){
+        
+        Color c = new Color(140, 105, 80);
+        if(row % 2 == 0){
+            vertical = true;
+            posx = (col / 2);
+            posy = (row / 2);
+            //System.out.println(posx + " " + posy);
+            if(posy < 8) c = GameData.verticalWalls.get(posx).get(posy) || GameData.verticalWalls.get(posx).get(posy-1>0?posy-1:0) ? new Color(140, 105,80) : new Color(0, true);
+            else c = GameData.verticalWalls.get(posx).get(posy-1) ? new Color(140, 105,80) : new Color(0, true);
+        }
+        else{
+            vertical = false;
+            posx = (col / 2);
+            posy = (row / 2);
+            //String st = posx == 7 && posy == 6 ? " KIVALASZTVA" : "";
+            System.out.println(posx + " " + posy);
+            if(posx < 8) c = GameData.horizontalWalls.get(posx).get(posy) || GameData.horizontalWalls.get(posx-1>0?posx-1:0).get(posy) ? new Color(140, 105,80) : new Color(0, true);
+            else c = GameData.horizontalWalls.get(posx-1).get(posy) ? new Color(140, 105,80) : new Color(0, true);
+        }
+
+        this.addActionListener(new ClickWall());
+        //this.addMouseListener(new MouseClickListener());
+
+        //this.setContentAreaFilled(true);
+        this.setBackground(c);
+        this.setFocusable(false);
+        this.setBorder(null);
+    }
+
+    public void refreshColor(){
+        Color c;
+        if(vertical){
+            //System.out.println(posx + " " + posy);
+            if(posy < 8) c = GameData.verticalWalls.get(posx).get(posy) || GameData.verticalWalls.get(posx).get(posy-1>0?posy-1:0) ? new Color(140, 105,80) : new Color(0, true);
+            else c = GameData.verticalWalls.get(posx).get(posy-1) ? new Color(140, 105,80) : new Color(0, true);
+        }
+        else{
+            //String st = posx == 7 && posy == 6 ? " KIVALASZTVA" : "";
+            System.out.println(posx + " " + posy);
+            if(posx < 8) c = GameData.horizontalWalls.get(posx).get(posy) || GameData.horizontalWalls.get(posx-1>0?posx-1:0).get(posy) ? new Color(140, 105,80) : new Color(0, true);
+            else c = GameData.horizontalWalls.get(posx-1).get(posy) ? new Color(140, 105,80) : new Color(0, true);
+        }
+        this.setBackground(c);
+    }
+
+    
+
+}
