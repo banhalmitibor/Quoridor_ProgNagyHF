@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.text.GapContent;
 
 public class Wall extends JButton {
 
@@ -44,6 +45,7 @@ public class Wall extends JButton {
                     GameData.horizontalWalls.get(posx).set(posy, true);
                 }
             }
+            GameData.placeWall();
             refreshColor();
             JButton bt = (JButton)e.getSource();
             Board b = (Board)bt.getParent();

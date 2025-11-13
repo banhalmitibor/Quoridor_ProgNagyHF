@@ -43,7 +43,7 @@ public class Board extends JPanel{
                         gbc.weighty = 1.0;
                         gbc.gridx = col;
                         gbc.gridy = row;
-                        this.add(new Tile(), gbc);
+                        this.add(new Tile(row, col), gbc);
                     }
                 }
                 else{
@@ -83,6 +83,10 @@ public class Board extends JPanel{
             else if(e.getClass() == Intersection.class){
                 Intersection i = (Intersection)e;
                 i.refreshColor();
+            }
+            else if(e.getClass() == Tile.class){
+                Tile t = (Tile)e;
+                t.repaint();
             }
         } 
     }
