@@ -18,8 +18,6 @@ public class GameData {
             }
         }
 
-        verticalWalls.get(0).set(1, true);
-        horizontalWalls.get(7).set(6, true);
     }
 
 }

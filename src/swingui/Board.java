@@ -5,16 +5,12 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.util.ArrayList;
-import javax.lang.model.element.Element;
-
-import javax.swing.JButton;
 import javax.swing.JPanel;
 
 public class Board extends JPanel{
     
     public Board(){
-        this.setBounds(50, 50, 620, 620);
+        this.setBounds(50, 50, 626, 620);
         this.setBackground(new Color(240, 225, 200));
         this.setLayout(new GridBagLayout());
 
@@ -66,16 +62,13 @@ public class Board extends JPanel{
                         gbc.weighty = 0.07;
                         gbc.gridx = col;
                         gbc.gridy = row;
-                        JPanel panel = new JPanel();
-                        panel.setBackground(Color.GRAY);
-                        this.add(panel, gbc);
+                        
+                        this.add(new Intersection(row, col), gbc);
                     }
                 }
                 
             }
 
-           
-        
         }
         
         
@@ -87,7 +80,11 @@ public class Board extends JPanel{
                 Wall w = (Wall)e;
                 w.refreshColor();
             }
-        }   
+            else if(e.getClass() == Intersection.class){
+                Intersection i = (Intersection)e;
+                i.refreshColor();
+            }
+        } 
     }
 
 }

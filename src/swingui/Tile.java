@@ -4,8 +4,6 @@ import java.awt.*;
 
 import javax.swing.JButton;
 
-import grid.GameData;
-
 public class Tile extends JButton {
     public Tile(){
 
