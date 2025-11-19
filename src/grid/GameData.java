@@ -9,8 +9,14 @@ public class GameData {
     public static final ArrayList<ArrayList<Boolean>> verticalWalls;
     public static final ArrayList<ArrayList<Boolean>> horizontalWalls;
 
+    public static ArrayList<Piece> players;
+
+    public static int curPlayer;
+
     public static Piece player1;
     public static Piece player2;
+
+
 
     private static boolean oneMoved = false;
 
@@ -28,33 +34,190 @@ public class GameData {
 
         player1 = new PlayerCharecter(4, 8);
         player2 = new PlayerCharecter(4, 0);
+        players = new ArrayList<>();
+        players.add(player1);
+        players.add(player2);
+        curPlayer = 0;
 
     }
 
-    public static int getPlayerPos(int x, int y){
+    /*public static int getPlayerPos(int x, int y){
         if(player1.getX() == x && player1.getY() == y) return 1;
         else if(player2.getX() == x && player2.getY() == y) return 2;
         else return 0;
+    }*/
+
+    public static void placeWall(int posx, int posy, boolean vertical){
+
+
+        if(posx<8 && posy < 8){
+            if(vertical){
+
+                if(verticalWalls.get(posx).get(posy+1 < 8 ? posy+1 : posy) || verticalWalls.get(posx).get(posy-1 >= 0 ? posy-1 : posy) || verticalWalls.get(posx).get(posy)) { //Annak ellenőrzése hogy van e fal az a hely felett vagy alatt ahova rakni szeretnénk, ha van akkor nem valid a fal
+                    System.out.println("VERTICAL NOT PLACED ---- ABOVE OR BELOW");
+                    return;
+                }
+                if(horizontalWalls.get(posx).get(posy)) { //Annak ellenőrzése hogy egy vízszintes fal keresztezné e a lerakandó falat
+                    System.out.println("VERTICAL NOT PLACED ---- HORIZONTAL WALL");
+                    return;
+                }
+
+                //FAL LERAKÁSA HA MINDEN CHECK PASSELT
+                if(players.get(curPlayer).canPlaceWall()) {
+                    verticalWalls.get(posx).set(posy, true);
+                    curPlayer = curPlayer+1 < players.size() ? curPlayer+1 : 0;
+                }
+            }
+            else{
+
+                if(verticalWalls.get(posx).get(posy)) { //Annak ellenőrzése hogy van e függőleges fal ami keresztezi a lerakandót
+                    System.out.println("HORIZONTAL NOT PLACED ----  VERTICAL WALL");
+                    return;
+                }
+                if(horizontalWalls.get(posx-1 >= 0 ? posx - 1 : posx).get(posy) || horizontalWalls.get(posx+1 < 8 ? posx+1 : posx).get(posy) || horizontalWalls.get(posx).get(posy)) { //Annak ellenőrzése, hogy van e a lerakandó fal mellett balra vagy jobbra amár fal ami ütné
+                    System.out.println("HORIZONTAL NOT PLACED ---- LEFT OR RIGHT");
+                    return;
+                }
+
+                //FAL LERAKÁSA HA MINDEN CHECK PASSELT
+                if(players.get(curPlayer).canPlaceWall()) {
+                    horizontalWalls.get(posx).set(posy, true);
+                    curPlayer = curPlayer+1 < players.size() ? curPlayer+1 : 0;
+                }
+
+                
+            }
+        }
+        
+
+
+        //oneMoved = !oneMoved;
     }
 
-    public static void placeWall(){
-        if(!oneMoved){
-            oneMoved = true;
+    private static Pair<Integer> getStepData(int x, int y, int px, int py){
+        int irany;
+        int dist = 0;
+        if(px == x && py > y) { irany = 1; dist = py-y; } //Fel
+        else if(py == y && x > px) { irany = 2; dist = x-px;}//Jobbra
+        else if(px == x && py < y) { irany = 3; dist = y-py;}//Le
+        else if(py == y && x < px) {irany = 4; dist = px-x; }//Balra
+        else irany = 0; //INVALID lépés
+        
+        return new Pair<>(irany, dist);
+    }
+
+
+    private static boolean isThereWallBetweenCoordinates(int x, int y, int px, int py, int irany){
+        
+        //int dist = data.getY();
+
+
+        if(irany == 0) return true; //Ugyanaz a négyzet lett kiválasztva amin jelenleg áll a játékos
+
+        //px--;
+        //py--;
+
+        switch(irany){
+            case 1 -> {
+                if(horizontalWalls.get(px < 8 ? px : px-1).get(py-1 >= 0 ? py-1 : py) || horizontalWalls.get(px-1).get(py - 1)) return true;
+                System.out.println("FELFELE TESZT " + px + " " + py);
+            }
+            case 2 -> {
+                if(verticalWalls.get(px).get(py < 8 ? py : py - 1) || verticalWalls.get(px < 8 ? px : px-1).get(py-1 >= 0 ? py-1 : py)) return true;
+                System.out.println("JOBBRA TESZT " + px + " " + py);
+            }
+            case 3 -> {
+                if(horizontalWalls.get(px < 8 ? px : px-1).get(py) || horizontalWalls.get(px-1).get(py)) return true;
+                System.out.println("LE TESZT " + px + " " + py);
+            }
+            case 4 -> {
+                if(verticalWalls.get(px-1).get(py < 8 ? py : py - 1) || verticalWalls.get(px-1).get(py-1 >= 0 ? py-1 : py)) return true;  
+                System.out.println("BALRA TESZT " + px + " " + py);                 
+            }
         }
-        else{
-            oneMoved = false;
+
+        return false;
+            
+    }
+
+    private static boolean moveIsValid(int x, int y, int px, int py){
+        Pair<Integer> data = getStepData(x, y, px, py); 
+        int irany = data.getX();
+        int dist = data.getY();
+
+        if(dist == 2){
+            
+            switch(irany){
+                case 1 -> {
+                    if(isThereWallBetweenCoordinates(px, py-1, px, py, irany) || (playerIsOnTile(px, py-1) == -1)) return false;
+                    py = py-1;
+                }
+                case 2 -> {
+                    if(isThereWallBetweenCoordinates(px+1, y, px, py, irany) || (playerIsOnTile(px+1, py) == -1)) return false;
+                    px = px+1;
+                }
+                case 3 -> {
+                    if(isThereWallBetweenCoordinates(px, py+1, px, py, irany) || (playerIsOnTile(px, py+1) == -1)) return false;
+                    py = py+1;
+                }
+                case 4 -> {
+                    if(isThereWallBetweenCoordinates(px-1, py, px, py, irany) || (playerIsOnTile(px-1, py) == -1)) return false;
+                    px = px-1;
+                }
+            }
         }
+
+        if(dist > 2) return false;
+
+        return !isThereWallBetweenCoordinates(x, y, px, py, irany);
+
+    }
+
+
+    public static int playerIsOnTile(int x, int y){
+        int eredmeny = -1;
+        for(Piece p : players){
+            if(p.getX() == x && p.getY() == y) eredmeny =  players.indexOf(p);
+        }
+        return eredmeny;
     }
 
     public static void movePlayer(int x, int y){
-        if(!oneMoved){
+
+        int px = players.get(curPlayer).getX();
+        int py = players.get(curPlayer).getY();
+
+        if(!moveIsValid(x, y, px, py)) return;
+
+        if(playerIsOnTile(x, y) != -1) return;
+
+        players.get(curPlayer).setPos(x, y);
+        curPlayer = curPlayer+1 < players.size() ? curPlayer+1 : 0;
+
+        /*if(!oneMoved){
+            int px = player1.getX();
+            int py = player1.getY();
+
+
+            if(!moveIsValid(x, y, px, py)) return;
+
+            if(player2.getX() == x && player2.getY() == y) return;
+
+
             player1.setPos(x, y);
             oneMoved = true;
         }
         else{
+            int px = player2.getX();
+            int py = player2.getY();
+
+            if(!moveIsValid(x, y, px, py)) return;            
+
+            if(player1.getX() == x && player1.getY() == y) return;
+
             player2.setPos(x, y);
             oneMoved = false;
-        }
+        }*/
 
     }
 

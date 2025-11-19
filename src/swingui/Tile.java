@@ -62,10 +62,10 @@ public class Tile extends JButton {
         int y = (getHeight() - size) / 2;
 
         if(getModel().isArmed()){
-            g2.setColor(colors.get(GameData.getPlayerPos(posx, posy)).darker());
+            g2.setColor(colors.get(GameData.playerIsOnTile(posx, posy)+1).darker());
         }
         else{
-            g2.setColor(colors.get(GameData.getPlayerPos(posx, posy)));
+            g2.setColor(colors.get(GameData.playerIsOnTile(posx, posy)+1));
         }
         
         g2.fillOval(x, y, size, size);

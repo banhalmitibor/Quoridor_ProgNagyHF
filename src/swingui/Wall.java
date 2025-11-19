@@ -22,13 +22,13 @@ public class Wall extends JButton {
     public class MouseHoverListener extends MouseAdapter{
         @Override 
         public void mouseEntered(MouseEvent e){
-            System.out.println("ENTERED");
+            //System.out.println("ENTERED");
             Wall w = (Wall)e.getSource();
             w.setBackground(new Color(128, 128, 128, 64));
         }
         @Override
         public void mouseExited(MouseEvent e){
-            System.out.println("EXITED");
+            //System.out.println("EXITED");
             Wall w = (Wall)e.getSource();
             w.refreshColor();
         }
@@ -37,15 +37,8 @@ public class Wall extends JButton {
     public class ClickWall implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e){
-            if(posx<8 && posy < 8){
-                if(vertical){
-                    GameData.verticalWalls.get(posx).set(posy, true);
-                }
-                else{
-                    GameData.horizontalWalls.get(posx).set(posy, true);
-                }
-            }
-            GameData.placeWall();
+            
+            GameData.placeWall(posx, posy, vertical);
             refreshColor();
             JButton bt = (JButton)e.getSource();
             Board b = (Board)bt.getParent();
@@ -92,7 +85,7 @@ public class Wall extends JButton {
         }
         else{
             //String st = posx == 7 && posy == 6 ? " KIVALASZTVA" : "";
-            System.out.println(posx + " " + posy);
+            //System.out.println(posx + " " + posy);
             if(posx < 8) c = GameData.horizontalWalls.get(posx).get(posy) || GameData.horizontalWalls.get(posx-1>0?posx-1:0).get(posy) ? PLACED : NOT_PLACED;
             else c = GameData.horizontalWalls.get(posx-1).get(posy) ? PLACED : NOT_PLACED;
         }

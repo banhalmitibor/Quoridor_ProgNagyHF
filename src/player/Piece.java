@@ -1,12 +1,14 @@
 package player;
 
 public abstract class Piece {
-    protected  int posx;
-    protected  int posy;
+    protected int posx;
+    protected int posy;
+    protected int wallnum;
 
     public Piece(int x, int y){
         posx = x;
         posy = y;
+        wallnum = 0;
     }
 
     public int getX() {return posx;}
@@ -16,6 +18,10 @@ public abstract class Piece {
     public void setPos(int x, int y){
         posx = x;
         posy = y;
+    }
+
+    public boolean canPlaceWall(){
+        return wallnum++ < 15;
     }
 
     public abstract void makeMove();
