@@ -1,5 +1,7 @@
 package grid;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 
 import player.Piece;
@@ -13,12 +15,26 @@ public class GameData {
 
     public static int curPlayer;
 
-    public static Piece player1;
-    public static Piece player2;
+    private static boolean gameWon = false;
+
+    //public static Piece player1;
+    //public static Piece player2;
+
+    private static final GameData INSTANCE = new GameData();
+
+    //LISTENEREKNEK FIX LATER
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+
+    public static void addPropertyChangeListener(PropertyChangeListener l) {
+        INSTANCE.pcs.addPropertyChangeListener(l);
+    }
+
+    public static void removePropertyChangeListener(PropertyChangeListener l) {
+        INSTANCE.pcs.removePropertyChangeListener(l);
+    }
 
 
-
-    private static boolean oneMoved = false;
+    //private static boolean oneMoved = false;
 
     static {
         verticalWalls = new ArrayList<>(8);
@@ -32,11 +48,11 @@ public class GameData {
             }
         }
 
-        player1 = new PlayerCharecter(4, 8);
-        player2 = new PlayerCharecter(4, 0);
+        //player1 = new PlayerCharecter(4, 8);
+        //player2 = new PlayerCharecter(4, 0);
         players = new ArrayList<>();
-        players.add(player1);
-        players.add(player2);
+        players.add(new PlayerCharecter(4, 8));
+        players.add(new PlayerCharecter(4, 0));
         curPlayer = 0;
 
     }
@@ -48,7 +64,7 @@ public class GameData {
     }*/
 
     public static void placeWall(int posx, int posy, boolean vertical){
-
+        if(gameWon) return;
 
         if(posx<8 && posy < 8){
             if(vertical){
@@ -65,7 +81,9 @@ public class GameData {
                 //FAL LERAKÁSA HA MINDEN CHECK PASSELT
                 if(players.get(curPlayer).canPlaceWall()) {
                     verticalWalls.get(posx).set(posy, true);
+                    int old = curPlayer;
                     curPlayer = curPlayer+1 < players.size() ? curPlayer+1 : 0;
+                    INSTANCE.pcs.firePropertyChange("Player", old, curPlayer);
                 }
             }
             else{
@@ -82,7 +100,9 @@ public class GameData {
                 //FAL LERAKÁSA HA MINDEN CHECK PASSELT
                 if(players.get(curPlayer).canPlaceWall()) {
                     horizontalWalls.get(posx).set(posy, true);
+                    int old = curPlayer;
                     curPlayer = curPlayer+1 < players.size() ? curPlayer+1 : 0;
+                    INSTANCE.pcs.firePropertyChange("Player", old, curPlayer);
                 }
 
                 
@@ -182,7 +202,21 @@ public class GameData {
         return eredmeny;
     }
 
+    public static boolean checkWin(int x, int y, int cur){
+        switch(cur){
+            case 0 -> {if(y == 0) return true;}
+            case 1 -> {if(y == 8) return true;}
+            case 2 -> {if(x == 8) return true;}
+            case 3 -> {if(x == 0) return true;}
+        }
+
+
+        return false;
+    }
+
     public static void movePlayer(int x, int y){
+
+        if(gameWon) return;
 
         int px = players.get(curPlayer).getX();
         int py = players.get(curPlayer).getY();
@@ -192,32 +226,15 @@ public class GameData {
         if(playerIsOnTile(x, y) != -1) return;
 
         players.get(curPlayer).setPos(x, y);
-        curPlayer = curPlayer+1 < players.size() ? curPlayer+1 : 0;
 
-        /*if(!oneMoved){
-            int px = player1.getX();
-            int py = player1.getY();
-
-
-            if(!moveIsValid(x, y, px, py)) return;
-
-            if(player2.getX() == x && player2.getY() == y) return;
-
-
-            player1.setPos(x, y);
-            oneMoved = true;
+        if(checkWin(x, y, curPlayer)){
+            System.out.println("WIIIIIIIINNNN");
+            INSTANCE.pcs.firePropertyChange("Win", 0, curPlayer+1);
+            return;
         }
-        else{
-            int px = player2.getX();
-            int py = player2.getY();
-
-            if(!moveIsValid(x, y, px, py)) return;            
-
-            if(player1.getX() == x && player1.getY() == y) return;
-
-            player2.setPos(x, y);
-            oneMoved = false;
-        }*/
+        int old = curPlayer;
+        curPlayer = curPlayer+1 < players.size() ? curPlayer+1 : 0;
+        INSTANCE.pcs.firePropertyChange("Player", old, curPlayer);
 
     }
 

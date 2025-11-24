@@ -1,8 +1,10 @@
 package swingui;
 
+import java.awt.BorderLayout;
 import javax.swing.JFrame;
 
 import java.awt.Color;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 
@@ -16,11 +18,12 @@ public class GameFrame extends JFrame {
         this.setSize(1280, 720);
         this.setLayout(null);
         
-
+        JLabel gameStatus = new GameStatusDisplay();
         JPanel board = new Board();
 
         this.getContentPane().setBackground(new Color(120, 30, 160));
         this.add(board);
+        this.add(gameStatus);
 
         this.setVisible(true);
         

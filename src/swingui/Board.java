@@ -11,6 +11,7 @@ public class Board extends JPanel{
     
     public Board(){
         this.setBounds(50, 50, 626, 620);
+        //this.setSize(626, 620);
         this.setBackground(new Color(240, 225, 200));
         this.setLayout(new GridBagLayout());
 

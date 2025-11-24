@@ -21,7 +21,7 @@ public abstract class Piece {
     }
 
     public boolean canPlaceWall(){
-        return wallnum++ < 15;
+        return wallnum++ < 10;
     }
 
     public abstract void makeMove();
