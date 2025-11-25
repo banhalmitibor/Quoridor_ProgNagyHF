@@ -63,6 +63,71 @@ public class GameData {
         else return 0;
     }*/
 
+    private static boolean hasPathToGoal(int startX, int startY, int playerIndex) {
+        int size = 9;
+        boolean[][] visited = new boolean[size][size];
+
+        ArrayList<int[]> queue = new ArrayList<>();
+        int head = 0;
+
+        queue.add(new int[] { startX, startY });
+        visited[startY][startX] = true;
+
+        while (head < queue.size()) {
+            int[] cur = queue.get(head++);
+            int x = cur[0];
+            int y = cur[1];
+
+            if (checkWin(x, y, playerIndex)) {
+                return true;
+            }
+
+            int px = x;
+            int py = y;
+
+            int[][] dirs = {
+                    { 0, -1 }, 
+                    { 1, 0 },  
+                    { 0, 1 },  
+                    { -1, 0 }  
+            };
+
+            for (int[] d : dirs) {
+                int nx = x + d[0];
+                int ny = y + d[1];
+
+                if (nx < 0 || nx >= size || ny < 0 || ny >= size) continue;
+                if (visited[ny][nx]) continue;
+
+                Pair<Integer> data = getStepData(nx, ny, px, py);
+                int dir = data.getX();
+                int dist = data.getY();
+
+                if (dist != 1) continue;
+
+                if (isThereWallBetweenCoordinates(nx, ny, px, py, dir)) continue;
+
+                visited[ny][nx] = true;
+                queue.add(new int[] { nx, ny });
+            }
+        }
+
+        // No winning tile reachable
+        return false;
+    }
+
+    private static boolean wallValid(){
+        for (int i = 0; i < players.size(); i++) {
+            Piece p = players.get(i);
+            if (!hasPathToGoal(p.getX(), p.getY(), i)) {
+                return false; 
+            }
+        }
+        
+
+        return true;
+    }
+
     public static void placeWall(int posx, int posy, boolean vertical){
         if(gameWon) return;
 
@@ -81,6 +146,11 @@ public class GameData {
                 //FAL LERAKÁSA HA MINDEN CHECK PASSELT
                 if(players.get(curPlayer).canPlaceWall()) {
                     verticalWalls.get(posx).set(posy, true);
+                    if(!wallValid()){
+                        verticalWalls.get(posx).set(posy, false);
+                        players.get(curPlayer).revertWall();
+                        return;
+                    }
                     int old = curPlayer;
                     curPlayer = curPlayer+1 < players.size() ? curPlayer+1 : 0;
                     INSTANCE.pcs.firePropertyChange("Player", old, curPlayer);
@@ -100,6 +170,11 @@ public class GameData {
                 //FAL LERAKÁSA HA MINDEN CHECK PASSELT
                 if(players.get(curPlayer).canPlaceWall()) {
                     horizontalWalls.get(posx).set(posy, true);
+                    if(!wallValid()){
+                        horizontalWalls.get(posx).set(posy, false);
+                        players.get(curPlayer).revertWall();
+                        return;
+                    }
                     int old = curPlayer;
                     curPlayer = curPlayer+1 < players.size() ? curPlayer+1 : 0;
                     INSTANCE.pcs.firePropertyChange("Player", old, curPlayer);
@@ -139,7 +214,7 @@ public class GameData {
 
         switch(irany){
             case 1 -> {
-                if(horizontalWalls.get(px < 8 ? px : px-1).get(py-1 >= 0 ? py-1 : py) || horizontalWalls.get(px-1).get(py - 1)) return true;
+                if(horizontalWalls.get(px < 8 ? px : px-1).get(py-1 >= 0 ? py-1 : py) || horizontalWalls.get(px-1 >= 0 ? px-1 : px).get(py - 1)) return true;
                 System.out.println("FELFELE TESZT " + px + " " + py);
             }
             case 2 -> {
@@ -147,11 +222,11 @@ public class GameData {
                 System.out.println("JOBBRA TESZT " + px + " " + py);
             }
             case 3 -> {
-                if(horizontalWalls.get(px < 8 ? px : px-1).get(py) || horizontalWalls.get(px-1).get(py)) return true;
+                if(horizontalWalls.get(px < 8 ? px : px-1).get(py) || horizontalWalls.get(px-1 >= 0 ? px-1 : px).get(py)) return true;
                 System.out.println("LE TESZT " + px + " " + py);
             }
             case 4 -> {
-                if(verticalWalls.get(px-1).get(py < 8 ? py : py - 1) || verticalWalls.get(px-1).get(py-1 >= 0 ? py-1 : py)) return true;  
+                if(verticalWalls.get(px-1 >= 0 ? px-1 : px).get(py < 8 ? py : py - 1) || verticalWalls.get(px-1 >= 0 ? px-1 : px).get(py-1 >= 0 ? py-1 : py)) return true;  
                 System.out.println("BALRA TESZT " + px + " " + py);                 
             }
         }

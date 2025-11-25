@@ -24,6 +24,10 @@ public abstract class Piece {
         return wallnum++ < 10;
     }
 
+    public void revertWall(){
+        wallnum--;
+    }
+
     public abstract void makeMove();
 
 }
