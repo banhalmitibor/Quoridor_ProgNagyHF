@@ -75,7 +75,7 @@ public class Board extends JPanel{
         
     }
 
-    public void refresh(){       
+    /*public void refresh(){       
         for(Component e : this.getComponents()){
             if(e.getClass() == Wall.class){
                 Wall w = (Wall)e;
@@ -90,6 +90,6 @@ public class Board extends JPanel{
                 t.repaint();
             }
         } 
-    }
+    }*/
 
 }

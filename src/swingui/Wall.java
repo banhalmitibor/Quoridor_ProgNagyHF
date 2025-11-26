@@ -39,10 +39,10 @@ public class Wall extends JButton {
         public void actionPerformed(ActionEvent e){
             
             GameData.placeWall(posx, posy, vertical);
-            refreshColor();
+            /*refreshColor();
             JButton bt = (JButton)e.getSource();
             Board b = (Board)bt.getParent();
-            b.refresh();
+            b.refresh();*/
         }
     }
 
@@ -69,6 +69,12 @@ public class Wall extends JButton {
 
         this.addActionListener(new ClickWall());
         this.addMouseListener(new MouseHoverListener());
+        GameData.addPropertyChangeListener(evt ->{
+            String n = evt.getPropertyName();
+            if(n.equals("Wall")){
+                refreshColor();
+            }
+        });
 
         this.setOpaque(true);
         this.setBackground(c);

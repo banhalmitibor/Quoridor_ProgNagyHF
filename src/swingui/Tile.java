@@ -19,9 +19,9 @@ public class Tile extends JButton {
         @Override
         public void actionPerformed(ActionEvent e){
             GameData.movePlayer(posx, posy);
-            JButton bt = (JButton)e.getSource();
+            /*JButton bt = (JButton)e.getSource();
             Board b = (Board)bt.getParent();
-            b.refresh();
+            b.refresh();*/
         }
     }
 
@@ -30,6 +30,8 @@ public class Tile extends JButton {
         colors.add(new Color(200, 160, 120));
         colors.add(new Color(255, 248, 238));
         colors.add(new Color(46, 30, 22));
+        colors.add(new Color(0, 255, 0));
+        colors.add(new Color(0, 0, 255));
     }
 
     public Tile(int row, int col){
@@ -38,6 +40,14 @@ public class Tile extends JButton {
         posy = (row / 2);
 
         this.addActionListener(new TileClickListener());
+
+        GameData.addPropertyChangeListener(evt ->{
+            String n = evt.getPropertyName();
+            if(n.equals("Tile")){
+                this.repaint();
+            }
+        });
+
         this.setBackground(new Color(200, 160, 120));
         this.setContentAreaFilled(false);
         this.setFocusPainted(true);

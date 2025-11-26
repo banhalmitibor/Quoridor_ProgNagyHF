@@ -25,6 +25,9 @@ public class GameFrame extends JFrame {
         this.add(board);
         this.add(gameStatus);
 
+        JPanel menu = new Menu();
+        this.add(menu);
+
         this.setVisible(true);
         
     }

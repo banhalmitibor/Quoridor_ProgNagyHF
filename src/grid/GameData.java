@@ -22,7 +22,7 @@ public class GameData {
 
     private static final GameData INSTANCE = new GameData();
 
-    //LISTENEREKNEK FIX LATER
+    //LISTENEREKNEK
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     public static void addPropertyChangeListener(PropertyChangeListener l) {
@@ -55,6 +55,31 @@ public class GameData {
         players.add(new PlayerCharecter(4, 0));
         curPlayer = 0;
 
+    }
+
+    public static void reset(int pnum){
+        gameWon = false;
+        for (int i = 0; i < 8; i++) {
+            for(int j = 0; j < 8; j++){
+                verticalWalls.get(i).set(j, false);
+                horizontalWalls.get(i).set(j, false);
+            }
+        }
+
+    
+        players = new ArrayList<>();
+        players.add(new PlayerCharecter(4, 8));
+        players.add(new PlayerCharecter(4, 0));
+        if(pnum == 4){
+            players.add(new PlayerCharecter(0, 4));
+            players.add(new PlayerCharecter(8, 4));
+        }
+        curPlayer = 0;
+
+        INSTANCE.pcs.firePropertyChange("Player", -1, 0);
+        INSTANCE.pcs.firePropertyChange("Wall", -1, 0);
+        INSTANCE.pcs.firePropertyChange("Tile", -1, 0);
+        INSTANCE.pcs.firePropertyChange("Reset", -1, 0);
     }
 
     /*public static int getPlayerPos(int x, int y){
@@ -182,10 +207,9 @@ public class GameData {
 
                 
             }
+            INSTANCE.pcs.firePropertyChange("Wall", 0, 1);
         }
         
-
-
         //oneMoved = !oneMoved;
     }
 
@@ -304,12 +328,15 @@ public class GameData {
 
         if(checkWin(x, y, curPlayer)){
             System.out.println("WIIIIIIIINNNN");
+            gameWon = true;
             INSTANCE.pcs.firePropertyChange("Win", 0, curPlayer+1);
+            INSTANCE.pcs.firePropertyChange("Tile", 0, 1);
             return;
         }
         int old = curPlayer;
         curPlayer = curPlayer+1 < players.size() ? curPlayer+1 : 0;
         INSTANCE.pcs.firePropertyChange("Player", old, curPlayer);
+        INSTANCE.pcs.firePropertyChange("Tile", 0, 1);
 
     }
 
