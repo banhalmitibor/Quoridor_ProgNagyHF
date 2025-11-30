@@ -1,15 +1,17 @@
 package swingui;
 
-import grid.GameData;
 import java.awt.BorderLayout;
 import java.awt.Color;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import game.Controller;
+import javax.swing.JPopupMenu;
+import javax.xml.crypto.dsig.spec.HMACParameterSpec;
 
 public class Menu extends JPanel {
     public Menu(){
@@ -43,6 +45,33 @@ public class Menu extends JPanel {
         middlePanel.add(newBut2);
         middlePanel.add(newBut4);
         this.add(middlePanel, BorderLayout.CENTER);
+
+
+        JPanel savePanel = new JPanel();
+        JComboBox<Integer> saveChooser = new JComboBox<>(new Integer[] {1, 2, 3, 4, 5});
+        JButton saveButton = new JButton("Save");
+        saveButton.addActionListener(evt -> {
+            try{
+                Controller.saveGame((int)saveChooser.getSelectedItem());
+            }
+            catch(Exception e){System.out.println(e.getMessage());}
+        });
+        JButton loadButton = new JButton("Load");
+        loadButton.addActionListener(evt -> {
+            try{
+                Controller.loadGame((int)saveChooser.getSelectedItem());
+            }
+            catch(Exception e){System.out.println(e.getMessage());}
+        });
+        
+        savePanel.add(saveChooser); 
+        savePanel.add(saveButton);
+        savePanel.add(loadButton);
+
+        this.add(savePanel, BorderLayout.SOUTH);
+
+        
+
 
         //this.add(new JButton());
     }

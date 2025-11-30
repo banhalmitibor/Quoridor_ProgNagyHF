@@ -5,10 +5,6 @@ import java.awt.Color;
 import javax.swing.JLabel;
 
 import game.Controller;
-import grid.GameData;
-
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 public class GameStatusDisplay extends JLabel{
 

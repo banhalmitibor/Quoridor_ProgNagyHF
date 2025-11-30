@@ -4,12 +4,11 @@ import java.awt.Color;
 import javax.swing.JPanel;
 
 import game.Controller;
-import grid.GameData;
 
 public class Intersection extends JPanel {
 
-    private int posx; //1 től indulnak
-    private int posy;
+    private final int posx; //1 től indulnak
+    private final int posy;
 
     public Intersection(int row, int col){
         posx = (col/2) + 1;

@@ -1,6 +1,5 @@
 package swingui;
 
-import grid.GameData;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,8 +11,8 @@ import game.Controller;
 
 public class Tile extends JButton {
 
-    private int posx;
-    private int posy;
+    private final int posx;
+    private final int posy;
 
     private static final ArrayList<Color> colors;
 

@@ -2,13 +2,16 @@ package grid;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.lang.reflect.Array;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import player.Piece;
 import player.PlayerCharecter;
 
-public class GameData {
+public class GameData implements Serializable {
     public ArrayList<ArrayList<Boolean>> verticalWalls;
     public ArrayList<ArrayList<Boolean>> horizontalWalls;
 
@@ -18,6 +21,29 @@ public class GameData {
 
     private boolean gameWon = false;
 
+    //KIMENTÉS (SZERIALIZÁCIÓ)
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        pcs = new PropertyChangeSupport(this);
+        
+    }
+
+
+    //A listenerek aktualitása miatt
+    public void refresh(){
+        pcs.firePropertyChange("Player", -1, curPlayer);
+        pcs.firePropertyChange("Wall", -1, 0);
+        pcs.firePropertyChange("Tile", -1, 0);
+        pcs.firePropertyChange("Reset", -1, 0);
+        for(Piece p : players){
+            p.refresh();
+        }
+    }
+
     //public static Piece player1;
     //public static Piece player2;
 
@@ -25,7 +51,7 @@ public class GameData {
 
 
     //LISTENEREKNEK
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     public void addPropertyChangeListener(PropertyChangeListener l) {
         pcs.addPropertyChangeListener(l);
@@ -132,7 +158,7 @@ public class GameData {
 
                 if (dist != 1) continue;
 
-                if (isThereWallBetweenCoordinates(nx, ny, px, py, dir)) continue;
+                if (isThereWallBetweenCoordinates(px, py, dir)) continue;
 
                 visited[ny][nx] = true;
                 queue.add(new int[] { nx, ny });
@@ -228,7 +254,7 @@ public class GameData {
     }
 
 
-    private boolean isThereWallBetweenCoordinates(int x, int y, int px, int py, int irany){
+    private boolean isThereWallBetweenCoordinates(int px, int py, int irany){
         
         //int dist = data.getY();
 
@@ -274,19 +300,19 @@ public class GameData {
             
             switch(irany){
                 case 1 -> {
-                    if(isThereWallBetweenCoordinates(px, py-1, px, py, irany) || (playerIsOnTile(px, py-1) == -1)) return false;
+                    if(isThereWallBetweenCoordinates(px, py, irany) || (playerIsOnTile(px, py-1) == -1)) return false;
                     py = py-1;
                 }
                 case 2 -> {
-                    if(isThereWallBetweenCoordinates(px+1, y, px, py, irany) || (playerIsOnTile(px+1, py) == -1)) return false;
+                    if(isThereWallBetweenCoordinates(px, py, irany) || (playerIsOnTile(px+1, py) == -1)) return false;
                     px = px+1;
                 }
                 case 3 -> {
-                    if(isThereWallBetweenCoordinates(px, py+1, px, py, irany) || (playerIsOnTile(px, py+1) == -1)) return false;
+                    if(isThereWallBetweenCoordinates(px, py, irany) || (playerIsOnTile(px, py+1) == -1)) return false;
                     py = py+1;
                 }
                 case 4 -> {
-                    if(isThereWallBetweenCoordinates(px-1, py, px, py, irany) || (playerIsOnTile(px-1, py) == -1)) return false;
+                    if(isThereWallBetweenCoordinates(px, py, irany) || (playerIsOnTile(px-1, py) == -1)) return false;
                     px = px-1;
                 }
             }
@@ -298,7 +324,7 @@ public class GameData {
         int dx = x - px;
         int dy = y - py;
 
-        return !isThereWallBetweenCoordinates(x, y, px, py, irany);
+        return !isThereWallBetweenCoordinates(px, py, irany);
 
     }
 

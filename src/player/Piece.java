@@ -2,11 +2,29 @@ package player;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
-public abstract class Piece {
+public abstract class Piece implements Serializable{
     protected int posx;
     protected int posy;
     protected int wallnum;
+
+    //KIMENTÉS (SZERIALIZÁCIÓ)
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        pcs = new PropertyChangeSupport(this);
+    }
+
+    public void refresh(){
+        pcs.firePropertyChange("wall", -1, wallnum);
+    }
 
     //PROPERTY CHANGE LISTENER a falszámok kiírása miatt miatt
     private PropertyChangeSupport pcs = new PropertyChangeSupport(this);

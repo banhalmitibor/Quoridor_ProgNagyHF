@@ -3,23 +3,21 @@ package swingui;
 import java.awt.*;
 import javax.swing.JButton;
 
-import grid.GameData;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.text.GapContent;
 
 import game.Controller;
 
 public class Wall extends JButton {
 
-    private int posx;
-    private int posy;
-    private boolean vertical;
+    private final int posx;
+    private final int posy;
+    private final boolean vertical;
 
-    private Color NOT_PLACED = new Color(240, 225, 200);
-    private Color PLACED = new Color(140, 105,80);
+    private static final Color NOT_PLACED = new Color(240, 225, 200);
+    private static final Color PLACED = new Color(140, 105,80);
 
     public class MouseHoverListener extends MouseAdapter{
         @Override 
