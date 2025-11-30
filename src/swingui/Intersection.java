@@ -3,6 +3,7 @@ package swingui;
 import java.awt.Color;
 import javax.swing.JPanel;
 
+import game.Controller;
 import grid.GameData;
 
 public class Intersection extends JPanel {
@@ -14,7 +15,7 @@ public class Intersection extends JPanel {
         posx = (col/2) + 1;
         posy = (row/2) + 1;
 
-        GameData.addPropertyChangeListener(evt ->{
+        Controller.addPropertyChangeListener(evt ->{
             String n = evt.getPropertyName();
             if(n.equals("Wall")){
                 refreshColor();
@@ -28,7 +29,7 @@ public class Intersection extends JPanel {
     public void refreshColor(){
         Color c;
         
-        c = GameData.horizontalWalls.get(posx-1).get(posy-1) || GameData.verticalWalls.get(posx-1).get(posy-1) ? new Color(140, 105,80) : new Color(240, 225, 200);
+        c = Controller.getHorizontalWalls().get(posx-1).get(posy-1) || Controller.getVertcialWalls().get(posx-1).get(posy-1) ? new Color(140, 105,80) : new Color(240, 225, 200);
         
         this.setBackground(c);
     }

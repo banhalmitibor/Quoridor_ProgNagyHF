@@ -8,6 +8,8 @@ import java.util.ArrayList;
 
 import javax.swing.JButton;
 
+import game.Controller;
+
 public class Tile extends JButton {
 
     private int posx;
@@ -18,7 +20,7 @@ public class Tile extends JButton {
     public class TileClickListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e){
-            GameData.movePlayer(posx, posy);
+            Controller.movePlayer(posx, posy);
             /*JButton bt = (JButton)e.getSource();
             Board b = (Board)bt.getParent();
             b.refresh();*/
@@ -41,7 +43,7 @@ public class Tile extends JButton {
 
         this.addActionListener(new TileClickListener());
 
-        GameData.addPropertyChangeListener(evt ->{
+        Controller.addPropertyChangeListener(evt ->{
             String n = evt.getPropertyName();
             if(n.equals("Tile")){
                 this.repaint();
@@ -72,10 +74,10 @@ public class Tile extends JButton {
         int y = (getHeight() - size) / 2;
 
         if(getModel().isArmed()){
-            g2.setColor(colors.get(GameData.playerIsOnTile(posx, posy)+1).darker());
+            g2.setColor(colors.get(Controller.playerIsOnTile(posx, posy)+1).darker());
         }
         else{
-            g2.setColor(colors.get(GameData.playerIsOnTile(posx, posy)+1));
+            g2.setColor(colors.get(Controller.playerIsOnTile(posx, posy)+1));
         }
         
         g2.fillOval(x, y, size, size);

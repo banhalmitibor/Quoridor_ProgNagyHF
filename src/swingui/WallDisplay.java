@@ -2,7 +2,7 @@ package swingui;
 
 import javax.swing.JLabel;
 
-import grid.GameData;
+import game.Controller;
 
 public class WallDisplay extends JLabel {
 
@@ -11,28 +11,38 @@ public class WallDisplay extends JLabel {
     public WallDisplay(int i){
         idx = i+1;
         this.setText(idx + ". játékos falai: " + 10);
-        GameData.players.get(idx-1).addPropertyChangeListener(evt -> {
-            String n = evt.getPropertyName();
-            //System.out.println("EVENT name = " + n);
-            if(n.equals("wall")){
-                //System.out.println("PLAYER CHANGE");
-                this.setText(idx + ". játékos falai: " + (10-(int)evt.getNewValue()));
-            }
-        });
+        if(idx-1 < Controller.getPlayers().size()){
+            Controller.getPlayers().get(idx-1).addPropertyChangeListener(evt -> {
+                String n = evt.getPropertyName();
+                //System.out.println("EVENT name = " + n);
+                if(n.equals("wall")){
+                    //System.out.println("PLAYER CHANGE");
+                    this.setText(idx + ". játékos falai: " + (10-(int)evt.getNewValue()));
+                }
+            });
+        }
+        else{
+            this.setText("");
+        }
 
-        GameData.addPropertyChangeListener(evt -> {
+        Controller.addPropertyChangeListener(evt -> {
             String n = evt.getPropertyName();
             //System.out.println("EVENT name = " + n);
             if(n.equals("Reset")){
                 this.setText(idx + ". játékos falai: " + 10);
-                GameData.players.get(idx-1).addPropertyChangeListener(ev -> {
-                    String np = ev.getPropertyName();
-                    //System.out.println("EVENT name = " + n);
-                    if(np.equals("wall")){
-                        //System.out.println("PLAYER CHANGE");
-                        this.setText(idx + ". játékos falai: " + (10-(int)ev.getNewValue()));
-                    }
-                });
+                if(idx-1 < Controller.getPlayers().size()) {
+                    Controller.getPlayers().get(idx-1).addPropertyChangeListener(ev -> {
+                        String np = ev.getPropertyName();
+                        //System.out.println("EVENT name = " + n);
+                        if(np.equals("wall")){
+                            //System.out.println("PLAYER CHANGE");
+                            this.setText(idx + ". játékos falai: " + (10-(int)ev.getNewValue()));
+                        }
+                    });
+                }
+                else{
+                    this.setText("");
+                }
             }
         });
     }

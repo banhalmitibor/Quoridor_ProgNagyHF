@@ -8,7 +8,8 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import player.Piece;
+
+import game.Controller;
 
 public class Menu extends JPanel {
     public Menu(){
@@ -20,9 +21,9 @@ public class Menu extends JPanel {
         //FALAK SZÁMÁNAK KIÍRÁSA
         JPanel walldisplays = new JPanel();
         walldisplays.setLayout(new BoxLayout(walldisplays, BoxLayout.Y_AXIS));
-        for(Piece p : GameData.players){
-            System.out.println("PLAYER LABEL CREATED " + GameData.players.indexOf(p));
-            JLabel l = new WallDisplay(GameData.players.indexOf(p));
+        for(int i = 0; i < 4; i++){
+            //System.out.println("PLAYER LABEL CREATED " + i);
+            JLabel l = new WallDisplay(i);
             walldisplays.add(l);
         }
         this.add(walldisplays, BorderLayout.NORTH);
@@ -33,10 +34,10 @@ public class Menu extends JPanel {
         JButton newBut4 = new JButton("New 4 player game");
 
         newBut2.addActionListener(ae -> {
-            GameData.reset(2);
+            Controller.reset(2);
         });
         newBut4.addActionListener(ae -> {
-            GameData.reset(4);
+            Controller.reset(4);
         });
 
         middlePanel.add(newBut2);

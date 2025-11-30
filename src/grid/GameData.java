@@ -2,41 +2,43 @@ package grid;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import player.Piece;
 import player.PlayerCharecter;
 
 public class GameData {
-    public static final ArrayList<ArrayList<Boolean>> verticalWalls;
-    public static final ArrayList<ArrayList<Boolean>> horizontalWalls;
+    public ArrayList<ArrayList<Boolean>> verticalWalls;
+    public ArrayList<ArrayList<Boolean>> horizontalWalls;
 
-    public static ArrayList<Piece> players;
+    public ArrayList<Piece> players;
 
-    public static int curPlayer;
+    public int curPlayer;
 
-    private static boolean gameWon = false;
+    private boolean gameWon = false;
 
     //public static Piece player1;
     //public static Piece player2;
 
-    private static final GameData INSTANCE = new GameData();
+    //private static final GameData INSTANCE = new GameData();
+
 
     //LISTENEREKNEK
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
-    public static void addPropertyChangeListener(PropertyChangeListener l) {
-        INSTANCE.pcs.addPropertyChangeListener(l);
+    public void addPropertyChangeListener(PropertyChangeListener l) {
+        pcs.addPropertyChangeListener(l);
     }
 
-    public static void removePropertyChangeListener(PropertyChangeListener l) {
-        INSTANCE.pcs.removePropertyChangeListener(l);
+    public void removePropertyChangeListener(PropertyChangeListener l) {
+        pcs.removePropertyChangeListener(l);
     }
 
 
     //private static boolean oneMoved = false;
 
-    static {
+    public GameData() {
         verticalWalls = new ArrayList<>(8);
         horizontalWalls = new ArrayList<>(8);
         for (int i = 0; i < 8; i++) {
@@ -57,7 +59,7 @@ public class GameData {
 
     }
 
-    public static void reset(int pnum){
+    public void reset(int pnum){
         gameWon = false;
         for (int i = 0; i < 8; i++) {
             for(int j = 0; j < 8; j++){
@@ -76,10 +78,10 @@ public class GameData {
         }
         curPlayer = 0;
 
-        INSTANCE.pcs.firePropertyChange("Player", -1, 0);
-        INSTANCE.pcs.firePropertyChange("Wall", -1, 0);
-        INSTANCE.pcs.firePropertyChange("Tile", -1, 0);
-        INSTANCE.pcs.firePropertyChange("Reset", -1, 0);
+        pcs.firePropertyChange("Player", -1, 0);
+        pcs.firePropertyChange("Wall", -1, 0);
+        pcs.firePropertyChange("Tile", -1, 0);
+        pcs.firePropertyChange("Reset", -1, 0);
     }
 
     /*public static int getPlayerPos(int x, int y){
@@ -88,7 +90,7 @@ public class GameData {
         else return 0;
     }*/
 
-    private static boolean hasPathToGoal(int startX, int startY, int playerIndex) {
+    private boolean hasPathToGoal(int startX, int startY, int playerIndex) {
         int size = 9;
         boolean[][] visited = new boolean[size][size];
 
@@ -141,7 +143,7 @@ public class GameData {
         return false;
     }
 
-    private static boolean wallValid(){
+    private boolean wallValid(){
         for (int i = 0; i < players.size(); i++) {
             Piece p = players.get(i);
             if (!hasPathToGoal(p.getX(), p.getY(), i)) {
@@ -153,7 +155,7 @@ public class GameData {
         return true;
     }
 
-    public static void placeWall(int posx, int posy, boolean vertical){
+    public void placeWall(int posx, int posy, boolean vertical){
         if(gameWon) return;
 
         if(posx<8 && posy < 8){
@@ -178,7 +180,7 @@ public class GameData {
                     }
                     int old = curPlayer;
                     curPlayer = curPlayer+1 < players.size() ? curPlayer+1 : 0;
-                    INSTANCE.pcs.firePropertyChange("Player", old, curPlayer);
+                    pcs.firePropertyChange("Player", old, curPlayer);
                 }
             }
             else{
@@ -202,18 +204,18 @@ public class GameData {
                     }
                     int old = curPlayer;
                     curPlayer = curPlayer+1 < players.size() ? curPlayer+1 : 0;
-                    INSTANCE.pcs.firePropertyChange("Player", old, curPlayer);
+                    pcs.firePropertyChange("Player", old, curPlayer);
                 }
 
                 
             }
-            INSTANCE.pcs.firePropertyChange("Wall", 0, 1);
+            pcs.firePropertyChange("Wall", 0, 1);
         }
         
         //oneMoved = !oneMoved;
     }
 
-    private static Pair<Integer> getStepData(int x, int y, int px, int py){
+    private Pair<Integer> getStepData(int x, int y, int px, int py){
         int irany;
         int dist = 0;
         if(px == x && py > y) { irany = 1; dist = py-y; } //Fel
@@ -226,7 +228,7 @@ public class GameData {
     }
 
 
-    private static boolean isThereWallBetweenCoordinates(int x, int y, int px, int py, int irany){
+    private boolean isThereWallBetweenCoordinates(int x, int y, int px, int py, int irany){
         
         //int dist = data.getY();
 
@@ -259,7 +261,11 @@ public class GameData {
             
     }
 
-    private static boolean moveIsValid(int x, int y, int px, int py){
+    private boolean diagnalJumpAllowed(){
+        return false;
+    }
+
+    private boolean moveIsValid(int x, int y, int px, int py){
         Pair<Integer> data = getStepData(x, y, px, py); 
         int irany = data.getX();
         int dist = data.getY();
@@ -288,12 +294,16 @@ public class GameData {
 
         if(dist > 2) return false;
 
+        //Itt kell ellenőrizni a blokkolt mellé ugrást
+        int dx = x - px;
+        int dy = y - py;
+
         return !isThereWallBetweenCoordinates(x, y, px, py, irany);
 
     }
 
 
-    public static int playerIsOnTile(int x, int y){
+    public int playerIsOnTile(int x, int y){
         int eredmeny = -1;
         for(Piece p : players){
             if(p.getX() == x && p.getY() == y) eredmeny =  players.indexOf(p);
@@ -301,7 +311,7 @@ public class GameData {
         return eredmeny;
     }
 
-    public static boolean checkWin(int x, int y, int cur){
+    public boolean checkWin(int x, int y, int cur){
         switch(cur){
             case 0 -> {if(y == 0) return true;}
             case 1 -> {if(y == 8) return true;}
@@ -313,7 +323,7 @@ public class GameData {
         return false;
     }
 
-    public static void movePlayer(int x, int y){
+    public void movePlayer(int x, int y){
 
         if(gameWon) return;
 
@@ -329,14 +339,14 @@ public class GameData {
         if(checkWin(x, y, curPlayer)){
             System.out.println("WIIIIIIIINNNN");
             gameWon = true;
-            INSTANCE.pcs.firePropertyChange("Win", 0, curPlayer+1);
-            INSTANCE.pcs.firePropertyChange("Tile", 0, 1);
+            pcs.firePropertyChange("Win", 0, curPlayer+1);
+            pcs.firePropertyChange("Tile", 0, 1);
             return;
         }
         int old = curPlayer;
         curPlayer = curPlayer+1 < players.size() ? curPlayer+1 : 0;
-        INSTANCE.pcs.firePropertyChange("Player", old, curPlayer);
-        INSTANCE.pcs.firePropertyChange("Tile", 0, 1);
+        pcs.firePropertyChange("Player", old, curPlayer);
+        pcs.firePropertyChange("Tile", 0, 1);
 
     }
 

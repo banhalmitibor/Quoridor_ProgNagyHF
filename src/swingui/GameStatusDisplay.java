@@ -3,6 +3,8 @@ package swingui;
 import java.awt.Color;
 
 import javax.swing.JLabel;
+
+import game.Controller;
 import grid.GameData;
 
 import java.beans.PropertyChangeEvent;
@@ -16,10 +18,10 @@ public class GameStatusDisplay extends JLabel{
         this.setBounds(265, 20, 250, 20);
         this.setFont(this.getFont().deriveFont(20f));
         this.setForeground(Color.WHITE);
-        this.setText(GameData.curPlayer+1 + ". játékos következik");
+        this.setText(Controller.getCurPlayer()+1 + ". játékos következik");
 
 
-        GameData.addPropertyChangeListener(evt -> {
+        Controller.addPropertyChangeListener(evt -> {
             String n = evt.getPropertyName();
             System.out.println("EVENT name = " + n);
             if(n.equals("Player")){
