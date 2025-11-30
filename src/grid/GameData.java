@@ -326,18 +326,22 @@ public class GameData implements Serializable {
                 case 1 -> {
                     if(isThereWallBetweenCoordinates(px, py, irany) || (playerIsOnTile(px, py-1) == -1)) return false;
                     py = py-1;
+                    dist--;
                 }
                 case 2 -> {
                     if(isThereWallBetweenCoordinates(px, py, irany) || (playerIsOnTile(px+1, py) == -1)) return false;
                     px = px+1;
+                    dist--;
                 }
                 case 3 -> {
                     if(isThereWallBetweenCoordinates(px, py, irany) || (playerIsOnTile(px, py+1) == -1)) return false;
                     py = py+1;
+                    dist--;
                 }
                 case 4 -> {
                     if(isThereWallBetweenCoordinates(px, py, irany) || (playerIsOnTile(px-1, py) == -1)) return false;
                     px = px-1;
+                    dist--;
                 }
             }
         }
