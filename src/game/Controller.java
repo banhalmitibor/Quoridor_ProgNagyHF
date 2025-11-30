@@ -2,7 +2,6 @@ package game;
 
 import grid.GameData;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
@@ -15,7 +14,7 @@ public class Controller {
     
     private static GameData data;
 
-    private static ArrayList<PropertyChangeListener> listeners = new ArrayList<>();
+    private static final ArrayList<PropertyChangeListener> listeners = new ArrayList<>();
 
     public static void setData(GameData gd){
         data = gd;
@@ -23,6 +22,10 @@ public class Controller {
 
     public static void reset(int n){
         data.reset(n);
+    }
+
+    public static void resetAi(){
+        data.resetAi();
     }
 
     public static void addPropertyChangeListener(PropertyChangeListener l){

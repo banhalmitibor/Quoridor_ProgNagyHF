@@ -12,7 +12,6 @@ public class Main {
         Controller.setData(data);
 
         GameFrame frame = new GameFrame();
-        
 
 
     }

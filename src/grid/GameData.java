@@ -1,6 +1,5 @@
 package grid;
 
-import grid.Pair;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
@@ -8,6 +7,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+
+import player.AiCharacter;
 
 import player.Piece;
 import player.PlayerCharecter;
@@ -104,6 +105,26 @@ public class GameData implements Serializable {
             players.add(new PlayerCharecter(8, 4));
         }
         curPlayer = 0;
+
+        pcs.firePropertyChange("Player", -1, 0);
+        pcs.firePropertyChange("Wall", -1, 0);
+        pcs.firePropertyChange("Tile", -1, 0);
+        pcs.firePropertyChange("Reset", -1, 0);
+    }
+
+    public void resetAi(){
+        gameWon = false;
+        for (int i = 0; i < 8; i++) {
+            for(int j = 0; j < 8; j++){
+                verticalWalls.get(i).set(j, false);
+                horizontalWalls.get(i).set(j, false);
+            }
+        }
+
+    
+        players = new ArrayList<>();
+        players.add(new PlayerCharecter(4, 8));
+        players.add(new AiCharacter(4, 0));
 
         pcs.firePropertyChange("Player", -1, 0);
         pcs.firePropertyChange("Wall", -1, 0);
@@ -237,6 +258,7 @@ public class GameData implements Serializable {
                 
             }
             pcs.firePropertyChange("Wall", 0, 1);
+            players.get(curPlayer).makeMove();
         }
         
         //oneMoved = !oneMoved;
@@ -309,9 +331,9 @@ public class GameData implements Serializable {
                 bx < 0 || bx > 8 || by < 0 || by > 8
             || isThereWallBetweenCoordinates(ix, iy, dirToMid);
 
-        if (!behindBlocked) return false;
+        return behindBlocked;
 
-        return true;
+        //return true;
     }
 
 
@@ -439,6 +461,7 @@ public class GameData implements Serializable {
         curPlayer = curPlayer+1 < players.size() ? curPlayer+1 : 0;
         pcs.firePropertyChange("Player", old, curPlayer);
         pcs.firePropertyChange("Tile", 0, 1);
+        players.get(curPlayer).makeMove();
 
     }
 
