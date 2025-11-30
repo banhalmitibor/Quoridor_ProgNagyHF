@@ -1,5 +1,6 @@
 package grid;
 
+import grid.Pair;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
@@ -76,7 +77,7 @@ public class GameData implements Serializable {
             }
         }
 
-        //player1 = new PlayerCharecter(4, 8);
+        //player1 = new PlayerCharecter(4, 8);y
         //player2 = new PlayerCharecter(4, 0);
         players = new ArrayList<>();
         players.add(new PlayerCharecter(4, 8));
@@ -248,7 +249,7 @@ public class GameData implements Serializable {
         else if(py == y && x > px) { irany = 2; dist = x-px;}//Jobbra
         else if(px == x && py < y) { irany = 3; dist = y-py;}//Le
         else if(py == y && x < px) {irany = 4; dist = px-x; }//Balra
-        else irany = 0; //INVALID lépés
+        else irany = 0; //INVALID lépés (Max oldalas ugrás)
         
         return new Pair<>(irany, dist);
     }
@@ -287,9 +288,32 @@ public class GameData implements Serializable {
             
     }
 
-    private boolean diagnalJumpAllowed(){
-        return false;
+    private boolean checkDiagnalMove(int ix, int iy, int px, int py){
+        // irány a köztes mező felé
+        if(playerIsOnTile(ix, iy) == -1) return false;
+
+        Pair<Integer> dataToMid = getStepData(ix, iy, px, py);
+        int dirToMid = dataToMid.getX();
+        if (dirToMid == 0) return false;
+
+        if (isThereWallBetweenCoordinates(px, py, dirToMid)) return false;
+
+        int bx = ix, by = iy;
+        switch (dirToMid) {
+            case 1 -> by = iy - 1;
+            case 2 -> bx = ix + 1;
+            case 3 -> by = iy + 1;
+            case 4 -> bx = ix - 1;
+        }
+        boolean behindBlocked =
+                bx < 0 || bx > 8 || by < 0 || by > 8
+            || isThereWallBetweenCoordinates(ix, iy, dirToMid);
+
+        if (!behindBlocked) return false;
+
+        return true;
     }
+
 
     private boolean moveIsValid(int x, int y, int px, int py){
         Pair<Integer> data = getStepData(x, y, px, py); 
@@ -321,8 +345,46 @@ public class GameData implements Serializable {
         if(dist > 2) return false;
 
         //Itt kell ellenőrizni a blokkolt mellé ugrást
-        int dx = x - px;
-        int dy = y - py;
+        if(irany == 0){
+
+            int dx = x - px;
+            int dy = y - py;
+
+            if (Math.abs(dx) != 1 || Math.abs(dy) != 1) {
+                return false;
+            }
+
+        
+            // Köztes mező (ott áll az ellenfél)
+            int ix1 = px + dx;
+            int iy1 = py;
+            int ix2 = px;
+            int iy2 = py + dy;
+
+            int ix;
+            int iy;
+
+            if (checkDiagnalMove(ix1, iy1, px, py)) {
+                ix = ix1;
+                iy = iy1;
+            }
+            else if (checkDiagnalMove(ix2, iy2, px, py)) {
+                ix = ix2;
+                iy = iy2;
+            }
+            else {
+                return false;
+            }
+        
+            px = ix;
+            py = iy;
+
+            data = getStepData(x, y, px, py);
+            irany = data.getX();
+            dist = data.getY();
+        }
+        
+        if(dist != 1) return false;
 
         return !isThereWallBetweenCoordinates(px, py, irany);
 
