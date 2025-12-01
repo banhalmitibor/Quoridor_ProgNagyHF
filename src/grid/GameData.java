@@ -321,6 +321,7 @@ public class GameData implements Serializable {
                 
             }
             pcs.firePropertyChange("Wall", 0, 1);
+            players.get(curPlayer).makeMove();
         }
         
     }
