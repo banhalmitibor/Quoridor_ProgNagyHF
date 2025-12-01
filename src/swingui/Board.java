@@ -6,11 +6,24 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import javax.swing.JPanel;
 
+/**
+ * Represents the game board panel for the Quoridor game.
+ * Uses GridBagLayout to arrange tiles, walls, and intersections in a 17x17 grid.
+ * The grid alternates between tile cells, wall cells, and intersection cells.
+ * 
+ * @author Quoridor Team
+ * @version 1.0
+ */
 public class Board extends JPanel{
     
+    /**
+     * Constructs a new Board panel with a 9x9 tile grid separated by wall slots.
+     * The visual grid is 17x17 to accommodate tiles, walls, and intersections.
+     * Even rows/columns contain tiles or vertical walls, odd rows/columns contain
+     * horizontal walls or intersections.
+     */
     public Board(){
         this.setBounds(50, 50, 626, 620);
-        //this.setSize(626, 620);
         this.setBackground(new Color(240, 225, 200));
         this.setLayout(new GridBagLayout());
 
@@ -73,22 +86,5 @@ public class Board extends JPanel{
         
         
     }
-
-    /*public void refresh(){       
-        for(Component e : this.getComponents()){
-            if(e.getClass() == Wall.class){
-                Wall w = (Wall)e;
-                w.refreshColor();
-            }
-            else if(e.getClass() == Intersection.class){
-                Intersection i = (Intersection)e;
-                i.refreshColor();
-            }
-            else if(e.getClass() == Tile.class){
-                Tile t = (Tile)e;
-                t.repaint();
-            }
-        } 
-    }*/
 
 }
