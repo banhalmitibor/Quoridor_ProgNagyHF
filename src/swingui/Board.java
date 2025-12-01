@@ -11,7 +11,7 @@ import javax.swing.JPanel;
  * Uses GridBagLayout to arrange tiles, walls, and intersections in a 17x17 grid.
  * The grid alternates between tile cells, wall cells, and intersection cells.
  * 
- * @author Quoridor Team
+ * @author banhalmitibor
  * @version 1.0
  */
 public class Board extends JPanel{

@@ -10,7 +10,7 @@ import game.Controller;
  * Intersections are located where walls cross and change color
  * when adjacent walls are placed.
  * 
- * @author Quoridor Team
+ * @author banhalmitibor
  * @version 1.0
  */
 public class Intersection extends JPanel {

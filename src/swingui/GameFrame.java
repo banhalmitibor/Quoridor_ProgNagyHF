@@ -11,7 +11,7 @@ import javax.swing.JPanel;
  * Main game window frame for the Quoridor game.
  * Contains the game board, status display, and menu panel.
  * 
- * @author Quoridor Team
+ * @author banhalmitibor
  * @version 1.0
  */
 public class GameFrame extends JFrame {

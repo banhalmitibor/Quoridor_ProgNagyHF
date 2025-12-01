@@ -9,7 +9,7 @@ import game.Controller;
  * Each player starts with 10 walls and the count decreases as walls are placed.
  * Updates automatically via property change listeners.
  * 
- * @author Quoridor Team
+ * @author banhalmitibor
  * @version 1.0
  */
 public class WallDisplay extends JLabel {

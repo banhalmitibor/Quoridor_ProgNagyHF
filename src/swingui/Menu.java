@@ -23,7 +23,7 @@ import game.Controller;
  * Provides buttons for starting new games, saving and loading game states,
  * and displays wall counts for each player.
  * 
- * @author Quoridor Team
+ * @author banhalmitibor
  * @version 1.0
  */
 public class Menu extends JPanel {

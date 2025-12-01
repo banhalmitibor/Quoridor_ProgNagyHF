@@ -14,7 +14,7 @@ import game.Controller;
  * Players can click tiles to move their pieces. The tile displays
  * a colored circle when a player is standing on it.
  * 
- * @author Quoridor Team
+ * @author banhalmitibor
  * @version 1.0
  */
 public class Tile extends JButton {

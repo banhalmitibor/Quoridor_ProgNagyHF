@@ -12,7 +12,7 @@ import java.io.Serializable;
  * Handles position tracking, wall placement count, and property change notifications.
  * Implements Serializable for game save/load functionality.
  * 
- * @author Quoridor Team
+ * @author banhalmitibor
  * @version 1.0
  */
 public abstract class Piece implements Serializable{

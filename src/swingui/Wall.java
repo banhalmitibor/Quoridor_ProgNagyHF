@@ -15,7 +15,7 @@ import game.Controller;
  * Players can click wall slots to place walls. Walls can be either
  * vertical or horizontal depending on their position in the grid.
  * 
- * @author Quoridor Team
+ * @author banhalmitibor
  * @version 1.0
  */
 public class Wall extends JButton {

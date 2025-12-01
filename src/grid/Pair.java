@@ -5,15 +5,15 @@ package grid;
  * Used to store and retrieve two related values, such as coordinates or direction/distance pairs.
  * 
  * @param <T> the type of both elements in the pair
- * @author Quoridor Team
+ * @author banhalmitibor
  * @version 1.0
  */
 public class Pair<T> {
     /** The first element of the pair. */
-    private T d1;
+    private final T d1;
     
     /** The second element of the pair. */
-    private T d2;
+    private final T d2;
 
     /**
      * Constructs a new Pair with the specified values.

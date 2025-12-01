@@ -11,7 +11,7 @@ import game.Controller;
  * Shows which player's turn it is and announces the winner.
  * Updates automatically via property change listeners.
  * 
- * @author Quoridor Team
+ * @author banhalmitibor
  * @version 1.0
  */
 public class GameStatusDisplay extends JLabel{

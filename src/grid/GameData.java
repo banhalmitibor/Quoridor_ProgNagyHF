@@ -18,7 +18,7 @@ import player.PlayerCharecter;
  * Manages player positions, wall placements, move validation, win conditions, and game serialization.
  * Implements PropertyChangeSupport for observer pattern to notify UI components of state changes.
  * 
- * @author Quoridor Team
+ * @author banhalmitibor
  * @version 1.0
  */
 public class GameData implements Serializable {
@@ -414,9 +414,7 @@ public class GameData implements Serializable {
                 bx < 0 || bx > 8 || by < 0 || by > 8
             || isThereWallBetweenCoordinates(ix, iy, dirToMid);
 
-        if (!behindBlocked) return false;
-
-        return true;
+        return behindBlocked;
     }
 
 

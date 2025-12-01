@@ -15,7 +15,7 @@ import player.Piece;
  * Provides static methods to access and modify game state, manage property change listeners,
  * and handle game saving/loading functionality.
  * 
- * @author Quoridor Team
+ * @author banhalmitibor
  * @version 1.0
  */
 public class Controller {
@@ -24,7 +24,7 @@ public class Controller {
     private static GameData data;
 
     /** List of property change listeners for UI updates. */
-    private static ArrayList<PropertyChangeListener> listeners = new ArrayList<>();
+    private static final ArrayList<PropertyChangeListener> listeners = new ArrayList<>();
 
     /**
      * Sets the game data instance to be used by the controller.

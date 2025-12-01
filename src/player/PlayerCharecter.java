@@ -4,7 +4,7 @@ package player;
  * Represents a human player character in the Quoridor game.
  * Extends the Piece class to provide human player functionality.
  * 
- * @author Quoridor Team
+ * @author banhalmitibor
  * @version 1.0
  */
 public class PlayerCharecter extends Piece {

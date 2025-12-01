@@ -8,7 +8,7 @@ import game.Controller;
  * Main entry point for the Quoridor game application.
  * Initializes the game data, sets up the controller, and creates the game window.
  * 
- * @author Quoridor Team
+ * @author banhalmitibor
  * @version 1.0
  */
 public class Main {
