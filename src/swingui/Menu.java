@@ -17,24 +17,34 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import game.Controller;
+import javax.swing.JPopupMenu;
+import javax.xml.crypto.dsig.spec.HMACParameterSpec;
 
+/**
+ * Menu panel containing game controls and player information.
+ * Provides buttons for starting new games, saving and loading game states,
+ * and displays wall counts for each player.
+ * 
+ * @author Quoridor Team
+ * @version 1.0
+ */
 public class Menu extends JPanel {
-    public Menu() {
+    
+    /**
+     * Constructs a new Menu panel with all control elements.
+     * Includes wall count displays, new game buttons, and save/load controls.
+     */
+    public Menu(){
         this.setBounds(726, 50, 400, 620);
-        this.setBackground(new Color(245, 245, 245)); 
-        this.setLayout(new BorderLayout(10, 10));
-        this.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        this.setBackground(Color.GRAY);
+        this.setLayout(new BorderLayout());
+        
 
+        // Wall count displays for each player
         JPanel walldisplays = new JPanel();
         walldisplays.setOpaque(false);
         walldisplays.setLayout(new BoxLayout(walldisplays, BoxLayout.Y_AXIS));
-        walldisplays.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(new Color(200, 200, 200)),
-                "Walls remaining"
-        ));
-
-        Font wallFont = new Font("SansSerif", Font.PLAIN, 14);
-        for (int i = 0; i < 4; i++) {
+        for(int i = 0; i < 4; i++){
             JLabel l = new WallDisplay(i);
             l.setFont(wallFont);
             l.setAlignmentX(LEFT_ALIGNMENT);
@@ -44,14 +54,8 @@ public class Menu extends JPanel {
 
         this.add(walldisplays, BorderLayout.NORTH);
 
-    
-        JPanel middlePanel = new JPanel(new GridBagLayout());
-        middlePanel.setOpaque(false);
-        middlePanel.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(new Color(200, 200, 200)),
-                "New Game"
-        ));
-
+        // New game buttons
+        JPanel middlePanel = new JPanel();
         JButton newBut2 = new JButton("New 2 player game");
         JButton newBut4 = new JButton("New 4 player game");
         JButton newButAi = new JButton("New AI game");
@@ -86,7 +90,7 @@ public class Menu extends JPanel {
 
         this.add(middlePanel, BorderLayout.CENTER);
 
-    
+        // Save/Load controls
         JPanel savePanel = new JPanel();
         savePanel.setOpaque(false);
         savePanel.setBorder(BorderFactory.createTitledBorder(
@@ -129,5 +133,9 @@ public class Menu extends JPanel {
         savePanel.add(loadButton);
 
         this.add(savePanel, BorderLayout.SOUTH);
+
+        
+
+
     }
 }
