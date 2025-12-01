@@ -7,7 +7,7 @@ import game.Controller;
 
 public class AiCharacter extends Piece{
 
-     private static final Random RNG = new Random();
+    private static final Random ran = new Random();
 
     public AiCharacter(int x, int y) {
         super(x, y);
@@ -16,9 +16,9 @@ public class AiCharacter extends Piece{
     @Override
     public void makeMove() {
       
-        if (wallnum < 10 && RNG.nextDouble() < 0.4) {
+        if (wallnum < 10 && ran.nextDouble() < 0.4) {
             if (tryPlaceSimpleBlockingWall()) {
-                return; // Successfully placed wall, turn ends (GameData will advance player, etc.)
+                return;
             }
         }
 
@@ -72,23 +72,21 @@ public class AiCharacter extends Piece{
         int oy = opponent.getY();
 
         int[][] candidates = new int[][] {
-                { ox, oy - 1, 0 }, // horizontal
-                { ox, oy - 1, 1 }, // vertical
+                { ox, oy - 1, 0 },
+                { ox, oy - 1, 1 }, 
 
-                // Slightly to the left/right above opponent
                 { ox - 1, oy - 1, 0 },
                 { ox + 1, oy - 1, 0 },
                 { ox - 1, oy - 1, 1 },
                 { ox + 1, oy - 1, 1 },
 
-                // Just at opponent's y-level (side blocking)
                 { ox - 1, oy, 0 },
                 { ox + 1, oy, 0 },
                 { ox - 1, oy, 1 },
                 { ox + 1, oy, 1 },
         };
 
-        // Randomize order slightly to avoid deterministic repetition
+
         shuffleArray(candidates);
 
         for (int[] c : candidates) {
@@ -102,11 +100,8 @@ public class AiCharacter extends Piece{
 
             int oldWalls = this.wallnum;
 
-            // Let GameData validate everything (overlaps, path existence, etc.)
             Controller.placeWall(wx, wy, vertical);
 
-            // If a wall was successfully placed, our wallnum will have been incremented
-            // and curPlayer will have changed (so this Piece's makeMove won't be called again now).
             if (this.wallnum > oldWalls) {
                 return true;
             }
@@ -115,12 +110,9 @@ public class AiCharacter extends Piece{
         return false;
     }
 
-    /**
-     * Simple Fisher–Yates shuffle for 2D int arrays.
-     */
     private void shuffleArray(int[][] arr) {
         for (int i = arr.length - 1; i > 0; i--) {
-            int j = RNG.nextInt(i + 1);
+            int j = ran.nextInt(i + 1);
             int[] tmp = arr[i];
             arr[i] = arr[j];
             arr[j] = tmp;

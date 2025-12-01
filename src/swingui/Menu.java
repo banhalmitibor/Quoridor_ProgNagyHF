@@ -21,11 +21,10 @@ import game.Controller;
 public class Menu extends JPanel {
     public Menu() {
         this.setBounds(726, 50, 400, 620);
-        this.setBackground(new Color(245, 245, 245)); // light background
+        this.setBackground(new Color(245, 245, 245)); 
         this.setLayout(new BorderLayout(10, 10));
         this.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        // ==== Wall displays (top) ====
         JPanel walldisplays = new JPanel();
         walldisplays.setOpaque(false);
         walldisplays.setLayout(new BoxLayout(walldisplays, BoxLayout.Y_AXIS));
@@ -45,7 +44,7 @@ public class Menu extends JPanel {
 
         this.add(walldisplays, BorderLayout.NORTH);
 
-        // ==== Middle: new game buttons ====
+    
         JPanel middlePanel = new JPanel(new GridBagLayout());
         middlePanel.setOpaque(false);
         middlePanel.setBorder(BorderFactory.createTitledBorder(
@@ -87,7 +86,7 @@ public class Menu extends JPanel {
 
         this.add(middlePanel, BorderLayout.CENTER);
 
-        // ==== Bottom: save / load panel ====
+    
         JPanel savePanel = new JPanel();
         savePanel.setOpaque(false);
         savePanel.setBorder(BorderFactory.createTitledBorder(
