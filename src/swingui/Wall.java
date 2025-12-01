@@ -48,7 +48,13 @@ public class Wall extends JButton {
         @Override 
         public void mouseEntered(MouseEvent e){
             Wall w = (Wall)e.getSource();
-            w.setBackground(new Color(128, 128, 128, 64));
+
+            /*240, 225, 200 255
+            128 128 128 70
+            new Color(216, 204, 184*/
+
+
+            w.setBackground(new Color(216, 204, 184));
         }
         
         /**
