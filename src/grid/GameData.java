@@ -12,21 +12,48 @@ import java.util.ArrayList;
 import player.Piece;
 import player.PlayerCharecter;
 
+/**
+ * Core game data class that holds all game state and implements game logic for Quoridor.
+ * Manages player positions, wall placements, move validation, win conditions, and game serialization.
+ * Implements PropertyChangeSupport for observer pattern to notify UI components of state changes.
+ * 
+ * @author Quoridor Team
+ * @version 1.0
+ */
 public class GameData implements Serializable {
+    /** 2D array tracking vertical wall placements. */
     public ArrayList<ArrayList<Boolean>> verticalWalls;
+    
+    /** 2D array tracking horizontal wall placements. */
     public ArrayList<ArrayList<Boolean>> horizontalWalls;
 
+    /** List of all players in the game. */
     public ArrayList<Piece> players;
 
+    /** Index of the current player whose turn it is (0-based). */
     public int curPlayer;
 
+    /** Flag indicating if the game has been won. */
     private boolean gameWon = false;
 
-    //KIMENTÉS (SZERIALIZÁCIÓ)
+    /**
+     * Custom serialization method to write the object state.
+     * 
+     * @param out the ObjectOutputStream to write to
+     * @throws IOException if an I/O error occurs
+     */
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
     }
 
+    /**
+     * Custom deserialization method to restore the object state.
+     * Reinitializes the PropertyChangeSupport after deserialization.
+     * 
+     * @param in the ObjectInputStream to read from
+     * @throws IOException if an I/O error occurs
+     * @throws ClassNotFoundException if the class cannot be found
+     */
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         pcs = new PropertyChangeSupport(this);
@@ -34,7 +61,10 @@ public class GameData implements Serializable {
     }
 
 
-    //A listenerek aktualitása miatt
+    /**
+     * Refreshes all property change listeners to update the UI.
+     * Called after loading a saved game to synchronize the display.
+     */
     public void refresh(){
         pcs.firePropertyChange("Player", -1, curPlayer);
         pcs.firePropertyChange("Wall", -1, 0);
@@ -45,26 +75,33 @@ public class GameData implements Serializable {
         }
     }
 
-    //public static Piece player1;
-    //public static Piece player2;
-
-    //private static final GameData INSTANCE = new GameData();
-
-
-    //LISTENEREKNEK
+    /** Property change support for notifying listeners about game state changes. */
     private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
+    /**
+     * Adds a property change listener to receive game state updates.
+     * 
+     * @param l the PropertyChangeListener to add
+     */
     public void addPropertyChangeListener(PropertyChangeListener l) {
         pcs.addPropertyChangeListener(l);
     }
 
+    /**
+     * Removes a property change listener.
+     * 
+     * @param l the PropertyChangeListener to remove
+     */
     public void removePropertyChangeListener(PropertyChangeListener l) {
         pcs.removePropertyChangeListener(l);
     }
 
 
-    //private static boolean oneMoved = false;
-
+    /**
+     * Constructs a new GameData with default initial state.
+     * Initializes an 8x8 grid of walls (all unplaced) and creates two players
+     * at their starting positions.
+     */
     public GameData() {
         verticalWalls = new ArrayList<>(8);
         horizontalWalls = new ArrayList<>(8);
@@ -77,8 +114,6 @@ public class GameData implements Serializable {
             }
         }
 
-        //player1 = new PlayerCharecter(4, 8);y
-        //player2 = new PlayerCharecter(4, 0);
         players = new ArrayList<>();
         players.add(new PlayerCharecter(4, 8));
         players.add(new PlayerCharecter(4, 0));
@@ -86,6 +121,12 @@ public class GameData implements Serializable {
 
     }
 
+    /**
+     * Resets the game to its initial state with the specified number of players.
+     * Clears all walls and repositions players to their starting positions.
+     * 
+     * @param pnum the number of players (2 or 4)
+     */
     public void reset(int pnum){
         gameWon = false;
         for (int i = 0; i < 8; i++) {
@@ -111,12 +152,15 @@ public class GameData implements Serializable {
         pcs.firePropertyChange("Reset", -1, 0);
     }
 
-    /*public static int getPlayerPos(int x, int y){
-        if(player1.getX() == x && player1.getY() == y) return 1;
-        else if(player2.getX() == x && player2.getY() == y) return 2;
-        else return 0;
-    }*/
-
+    /**
+     * Checks if a player has a valid path to their goal using BFS algorithm.
+     * Used to validate wall placements don't completely block a player.
+     * 
+     * @param startX the starting x-coordinate
+     * @param startY the starting y-coordinate
+     * @param playerIndex the index of the player to check
+     * @return true if a path exists to the player's goal, false otherwise
+     */
     private boolean hasPathToGoal(int startX, int startY, int playerIndex) {
         int size = 9;
         boolean[][] visited = new boolean[size][size];
@@ -170,6 +214,12 @@ public class GameData implements Serializable {
         return false;
     }
 
+    /**
+     * Validates that all players still have a path to their respective goals.
+     * Used to ensure a wall placement doesn't create an illegal game state.
+     * 
+     * @return true if all players have valid paths, false otherwise
+     */
     private boolean wallValid(){
         for (int i = 0; i < players.size(); i++) {
             Piece p = players.get(i);
@@ -182,22 +232,30 @@ public class GameData implements Serializable {
         return true;
     }
 
+    /**
+     * Attempts to place a wall at the specified position.
+     * Validates the placement doesn't overlap existing walls, cross other walls,
+     * or block all paths for any player.
+     * 
+     * @param posx the x-coordinate for the wall
+     * @param posy the y-coordinate for the wall
+     * @param vertical true for vertical wall, false for horizontal wall
+     */
     public void placeWall(int posx, int posy, boolean vertical){
         if(gameWon) return;
 
         if(posx<8 && posy < 8){
             if(vertical){
 
-                if(verticalWalls.get(posx).get(posy+1 < 8 ? posy+1 : posy) || verticalWalls.get(posx).get(posy-1 >= 0 ? posy-1 : posy) || verticalWalls.get(posx).get(posy)) { //Annak ellenőrzése hogy van e fal az a hely felett vagy alatt ahova rakni szeretnénk, ha van akkor nem valid a fal
+                if(verticalWalls.get(posx).get(posy+1 < 8 ? posy+1 : posy) || verticalWalls.get(posx).get(posy-1 >= 0 ? posy-1 : posy) || verticalWalls.get(posx).get(posy)) {
                     System.out.println("VERTICAL NOT PLACED ---- ABOVE OR BELOW");
                     return;
                 }
-                if(horizontalWalls.get(posx).get(posy)) { //Annak ellenőrzése hogy egy vízszintes fal keresztezné e a lerakandó falat
+                if(horizontalWalls.get(posx).get(posy)) {
                     System.out.println("VERTICAL NOT PLACED ---- HORIZONTAL WALL");
                     return;
                 }
 
-                //FAL LERAKÁSA HA MINDEN CHECK PASSELT
                 if(players.get(curPlayer).canPlaceWall()) {
                     verticalWalls.get(posx).set(posy, true);
                     if(!wallValid()){
@@ -212,16 +270,15 @@ public class GameData implements Serializable {
             }
             else{
 
-                if(verticalWalls.get(posx).get(posy)) { //Annak ellenőrzése hogy van e függőleges fal ami keresztezi a lerakandót
+                if(verticalWalls.get(posx).get(posy)) {
                     System.out.println("HORIZONTAL NOT PLACED ----  VERTICAL WALL");
                     return;
                 }
-                if(horizontalWalls.get(posx-1 >= 0 ? posx - 1 : posx).get(posy) || horizontalWalls.get(posx+1 < 8 ? posx+1 : posx).get(posy) || horizontalWalls.get(posx).get(posy)) { //Annak ellenőrzése, hogy van e a lerakandó fal mellett balra vagy jobbra amár fal ami ütné
+                if(horizontalWalls.get(posx-1 >= 0 ? posx - 1 : posx).get(posy) || horizontalWalls.get(posx+1 < 8 ? posx+1 : posx).get(posy) || horizontalWalls.get(posx).get(posy)) {
                     System.out.println("HORIZONTAL NOT PLACED ---- LEFT OR RIGHT");
                     return;
                 }
 
-                //FAL LERAKÁSA HA MINDEN CHECK PASSELT
                 if(players.get(curPlayer).canPlaceWall()) {
                     horizontalWalls.get(posx).set(posy, true);
                     if(!wallValid()){
@@ -239,31 +296,43 @@ public class GameData implements Serializable {
             pcs.firePropertyChange("Wall", 0, 1);
         }
         
-        //oneMoved = !oneMoved;
     }
 
+    /**
+     * Calculates the direction and distance between two positions.
+     * Direction encoding: 1=up, 2=right, 3=down, 4=left, 0=invalid (diagonal).
+     * 
+     * @param x the target x-coordinate
+     * @param y the target y-coordinate
+     * @param px the current x-coordinate
+     * @param py the current y-coordinate
+     * @return a Pair containing direction and distance
+     */
     private Pair<Integer> getStepData(int x, int y, int px, int py){
         int irany;
         int dist = 0;
-        if(px == x && py > y) { irany = 1; dist = py-y; } //Fel
-        else if(py == y && x > px) { irany = 2; dist = x-px;}//Jobbra
-        else if(px == x && py < y) { irany = 3; dist = y-py;}//Le
-        else if(py == y && x < px) {irany = 4; dist = px-x; }//Balra
-        else irany = 0; //INVALID lépés (Max oldalas ugrás)
+        if(px == x && py > y) { irany = 1; dist = py-y; }
+        else if(py == y && x > px) { irany = 2; dist = x-px;}
+        else if(px == x && py < y) { irany = 3; dist = y-py;}
+        else if(py == y && x < px) {irany = 4; dist = px-x; }
+        else irany = 0;
         
         return new Pair<>(irany, dist);
     }
 
 
+    /**
+     * Checks if there is a wall blocking movement between two coordinates.
+     * 
+     * @param px the current x-coordinate
+     * @param py the current y-coordinate
+     * @param irany the direction of movement (1=up, 2=right, 3=down, 4=left)
+     * @return true if a wall blocks the path, false otherwise
+     */
     private boolean isThereWallBetweenCoordinates(int px, int py, int irany){
         
-        //int dist = data.getY();
 
-
-        if(irany == 0) return true; //Ugyanaz a négyzet lett kiválasztva amin jelenleg áll a játékos
-
-        //px--;
-        //py--;
+        if(irany == 0) return true;
 
         switch(irany){
             case 1 -> {
@@ -288,8 +357,17 @@ public class GameData implements Serializable {
             
     }
 
+    /**
+     * Checks if a diagonal move is valid when jumping over an opponent.
+     * A diagonal move is allowed when jumping straight over an opponent is blocked.
+     * 
+     * @param ix the intermediate x-coordinate (opponent position)
+     * @param iy the intermediate y-coordinate (opponent position)
+     * @param px the current player x-coordinate
+     * @param py the current player y-coordinate
+     * @return true if the diagonal move is valid, false otherwise
+     */
     private boolean checkDiagnalMove(int ix, int iy, int px, int py){
-        // irány a köztes mező felé
         if(playerIsOnTile(ix, iy) == -1) return false;
 
         Pair<Integer> dataToMid = getStepData(ix, iy, px, py);
@@ -315,6 +393,16 @@ public class GameData implements Serializable {
     }
 
 
+    /**
+     * Validates if a move from the current position to the target position is legal.
+     * Handles standard moves, jumps over opponents, and diagonal moves.
+     * 
+     * @param x the target x-coordinate
+     * @param y the target y-coordinate
+     * @param px the current x-coordinate
+     * @param py the current y-coordinate
+     * @return true if the move is valid, false otherwise
+     */
     private boolean moveIsValid(int x, int y, int px, int py){
         Pair<Integer> data = getStepData(x, y, px, py); 
         int irany = data.getX();
@@ -348,7 +436,6 @@ public class GameData implements Serializable {
 
         if(dist > 2) return false;
 
-        //Itt kell ellenőrizni a blokkolt mellé ugrást
         if(irany == 0){
 
             int dx = x - px;
@@ -359,7 +446,6 @@ public class GameData implements Serializable {
             }
 
         
-            // Köztes mező (ott áll az ellenfél)
             int ix1 = px + dx;
             int iy1 = py;
             int ix2 = px;
@@ -395,6 +481,13 @@ public class GameData implements Serializable {
     }
 
 
+    /**
+     * Checks if any player is on the specified tile.
+     * 
+     * @param x the x-coordinate of the tile
+     * @param y the y-coordinate of the tile
+     * @return the index of the player on the tile, or -1 if empty
+     */
     public int playerIsOnTile(int x, int y){
         int eredmeny = -1;
         for(Piece p : players){
@@ -403,6 +496,15 @@ public class GameData implements Serializable {
         return eredmeny;
     }
 
+    /**
+     * Checks if a player has reached their winning position.
+     * Player 0 wins at y=0, player 1 wins at y=8, player 2 wins at x=8, player 3 wins at x=0.
+     * 
+     * @param x the x-coordinate to check
+     * @param y the y-coordinate to check
+     * @param cur the current player index
+     * @return true if the position is a winning position for the player, false otherwise
+     */
     public boolean checkWin(int x, int y, int cur){
         switch(cur){
             case 0 -> {if(y == 0) return true;}
@@ -415,6 +517,14 @@ public class GameData implements Serializable {
         return false;
     }
 
+    /**
+     * Attempts to move the current player to the specified position.
+     * Validates the move, updates player position, checks for win condition,
+     * and advances to the next player's turn.
+     * 
+     * @param x the target x-coordinate
+     * @param y the target y-coordinate
+     */
     public void movePlayer(int x, int y){
 
         if(gameWon) return;

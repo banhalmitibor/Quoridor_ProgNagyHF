@@ -9,20 +9,39 @@ import javax.swing.JButton;
 
 import game.Controller;
 
+/**
+ * Button representing a single tile on the game board.
+ * Players can click tiles to move their pieces. The tile displays
+ * a colored circle when a player is standing on it.
+ * 
+ * @author Quoridor Team
+ * @version 1.0
+ */
 public class Tile extends JButton {
 
+    /** The x-coordinate of this tile on the game board. */
     private final int posx;
+    
+    /** The y-coordinate of this tile on the game board. */
     private final int posy;
 
+    /** Color palette for player pieces and empty tiles. */
     private static final ArrayList<Color> colors;
 
+    /**
+     * Action listener that handles tile click events.
+     * Attempts to move the current player to this tile.
+     */
     public class TileClickListener implements ActionListener{
+        /**
+         * Invoked when the tile is clicked.
+         * Delegates the move action to the game controller.
+         * 
+         * @param e the action event
+         */
         @Override
         public void actionPerformed(ActionEvent e){
             Controller.movePlayer(posx, posy);
-            /*JButton bt = (JButton)e.getSource();
-            Board b = (Board)bt.getParent();
-            b.refresh();*/
         }
     }
 
@@ -35,6 +54,13 @@ public class Tile extends JButton {
         colors.add(new Color(0, 0, 255));
     }
 
+    /**
+     * Constructs a new Tile at the specified grid position.
+     * Converts from visual grid coordinates to game coordinates.
+     * 
+     * @param row the visual grid row (even numbers only)
+     * @param col the visual grid column (even numbers only)
+     */
     public Tile(int row, int col){
 
         posx = (col / 2);
@@ -54,6 +80,12 @@ public class Tile extends JButton {
         this.setFocusPainted(true);
     }
 
+    /**
+     * Custom paint method to render the tile with rounded corners
+     * and display player pieces as colored circles.
+     * 
+     * @param g the Graphics context
+     */
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g.create();
@@ -67,7 +99,7 @@ public class Tile extends JButton {
 
         g2.fillRoundRect(0, 0, getWidth(), getHeight(), 15, 15);
 
-        //Ha éppen ezen a mezőn van egy játékos akkor kirajzoljuk a megfelelő színű kört
+        // Draw player piece if present on this tile
         int size = Math.min(getWidth(), getHeight()) - 10;
         int x = (getWidth() - size) / 2;
         int y = (getHeight() - size) / 2;
@@ -85,6 +117,11 @@ public class Tile extends JButton {
         g2.dispose();
     }
 
+    /**
+     * Custom border painting with rounded corners.
+     * 
+     * @param g the Graphics context
+     */
     @Override
     protected void paintBorder(Graphics g) {
         Graphics2D g2 = (Graphics2D) g.create();

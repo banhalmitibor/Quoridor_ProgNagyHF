@@ -7,8 +7,20 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 
+/**
+ * Main game window frame for the Quoridor game.
+ * Contains the game board, status display, and menu panel.
+ * 
+ * @author Quoridor Team
+ * @version 1.0
+ */
 public class GameFrame extends JFrame {
 
+    /**
+     * Constructs a new GameFrame with all UI components.
+     * Sets up the window with the game board, status display, and menu panel.
+     * The window is fixed size (1280x720) and non-resizable.
+     */
     public GameFrame(){
 
         this.setTitle("Quoridor");
