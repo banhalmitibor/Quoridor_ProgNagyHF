@@ -1,0 +1,208 @@
+@startuml Quoridor Class Diagram
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+package "main" {
+    class Main {
+        +{static} main(args: String[]): void
+    }
+}
+
+package "game" {
+    class Controller {
+        -{static} data: GameData
+        -{static} listeners: ArrayList<PropertyChangeListener>
+        +{static} setData(gd: GameData): void
+        +{static} reset(n: int): void
+        +{static} resetAi(): void
+        +{static} addPropertyChangeListener(l: PropertyChangeListener): void
+        +{static} getPlayers(): ArrayList<Piece>
+        +{static} getCurPlayer(): int
+        +{static} getVertcialWalls(): ArrayList<ArrayList<Boolean>>
+        +{static} getHorizontalWalls(): ArrayList<ArrayList<Boolean>>
+        +{static} movePlayer(x: int, y: int): void
+        +{static} playerIsOnTile(x: int, y: int): int
+        +{static} placeWall(posx: int, posy: int, vertical: boolean): void
+        +{static} saveGame(slot: int): void
+        +{static} loadGame(slot: int): void
+    }
+}
+
+package "grid" {
+    class GameData implements Serializable {
+        +verticalWalls: ArrayList<ArrayList<Boolean>>
+        +horizontalWalls: ArrayList<ArrayList<Boolean>>
+        +players: ArrayList<Piece>
+        +curPlayer: int
+        -gameWon: boolean
+        -pcs: PropertyChangeSupport
+        -writeObject(out: ObjectOutputStream): void
+        -readObject(in: ObjectInputStream): void
+        +refresh(): void
+        +addPropertyChangeListener(l: PropertyChangeListener): void
+        +removePropertyChangeListener(l: PropertyChangeListener): void
+        +GameData()
+        +reset(pnum: int): void
+        +resetAi(): void
+        -hasPathToGoal(startX: int, startY: int, playerIndex: int): boolean
+        -wallValid(): boolean
+        +placeWall(posx: int, posy: int, vertical: boolean): void
+        -getStepData(x: int, y: int, px: int, py: int): Pair<Integer>
+        -isThereWallBetweenCoordinates(px: int, py: int, irany: int): boolean
+        -checkDiagnalMove(ix: int, iy: int, px: int, py: int): boolean
+        -moveIsValid(x: int, y: int, px: int, py: int): boolean
+        +playerIsOnTile(x: int, y: int): int
+        +checkWin(x: int, y: int, cur: int): boolean
+        +movePlayer(x: int, y: int): void
+    }
+
+    class Pair<T> {
+        -d1: T
+        -d2: T
+        +Pair(a: T, b: T)
+        +getX(): T
+        +getY(): T
+    }
+}
+
+package "player" {
+    abstract class Piece implements Serializable {
+        #posx: int
+        #posy: int
+        #wallnum: int
+        -pcs: PropertyChangeSupport
+        -writeObject(out: ObjectOutputStream): void
+        -readObject(in: ObjectInputStream): void
+        +refresh(): void
+        +addPropertyChangeListener(l: PropertyChangeListener): void
+        +removePropertyChangeListener(l: PropertyChangeListener): void
+        +Piece(x: int, y: int)
+        +getX(): int
+        +getY(): int
+        +setPos(x: int, y: int): void
+        +canPlaceWall(): boolean
+        +revertWall(): void
+        +{abstract} makeMove(): void
+    }
+
+    class PlayerCharecter extends Piece {
+        +PlayerCharecter(x: int, y: int)
+        +makeMove(): void
+    }
+
+    class AiCharacter extends Piece {
+        -{static} ran: Random
+        +AiCharacter(x: int, y: int)
+        +makeMove(): void
+        -tryMoveTowardGoal(): void
+        -tryMove(tx: int, ty: int): boolean
+        -tryPlaceSimpleBlockingWall(): boolean
+        -shuffleArray(arr: int[][]): void
+    }
+}
+
+package "swingui" {
+    class GameFrame extends JFrame {
+        +GameFrame()
+    }
+
+    class Board extends JPanel {
+        +Board()
+    }
+
+    class Tile extends JButton {
+        -posx: int
+        -posy: int
+        -{static} colors: ArrayList<Color>
+        +Tile(row: int, col: int)
+        #paintComponent(g: Graphics): void
+        #paintBorder(g: Graphics): void
+    }
+
+    class "Tile.TileClickListener" as TileClickListener implements ActionListener {
+        +actionPerformed(e: ActionEvent): void
+    }
+
+    class Wall extends JButton {
+        -posx: int
+        -posy: int
+        -vertical: boolean
+        -{static} NOT_PLACED: Color
+        -{static} PLACED: Color
+        +Wall(row: int, col: int)
+        +refreshColor(): void
+    }
+
+    class "Wall.MouseHoverListener" as MouseHoverListener extends MouseAdapter {
+        +mouseEntered(e: MouseEvent): void
+        +mouseExited(e: MouseEvent): void
+    }
+
+    class "Wall.ClickWall" as ClickWall implements ActionListener {
+        +actionPerformed(e: ActionEvent): void
+    }
+
+    class Intersection extends JPanel {
+        -posx: int
+        -posy: int
+        +Intersection(row: int, col: int)
+        +refreshColor(): void
+    }
+
+    class Menu extends JPanel {
+        +Menu()
+    }
+
+    class GameStatusDisplay extends JLabel {
+        +GameStatusDisplay()
+    }
+
+    class WallDisplay extends JLabel {
+        -idx: int
+        +WallDisplay(i: int)
+    }
+}
+
+' Inheritance relationships
+PlayerCharecter --|> Piece
+AiCharacter --|> Piece
+
+' Inner class relationships
+TileClickListener --+ Tile
+MouseHoverListener --+ Wall
+ClickWall --+ Wall
+
+' Dependencies and associations
+Main ..> GameData : creates
+Main ..> Controller : uses
+Main ..> GameFrame : creates
+
+Controller --> GameData : uses
+Controller --> Piece : uses
+
+GameData --> Piece : contains
+GameData --> PlayerCharecter : creates
+GameData --> AiCharacter : creates
+GameData --> Pair : uses
+
+AiCharacter ..> Controller : uses
+
+GameFrame --> Board : contains
+GameFrame --> GameStatusDisplay : contains
+GameFrame --> Menu : contains
+
+Board --> Tile : creates
+Board --> Wall : creates
+Board --> Intersection : creates
+
+Tile ..> Controller : uses
+Wall ..> Controller : uses
+Intersection ..> Controller : uses
+GameStatusDisplay ..> Controller : uses
+Menu ..> Controller : uses
+WallDisplay ..> Controller : uses
+
+Menu --> WallDisplay : creates
+
+@enduml
