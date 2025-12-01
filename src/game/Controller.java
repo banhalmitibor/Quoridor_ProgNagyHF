@@ -45,6 +45,13 @@ public class Controller {
     }
 
     /**
+     * Resets the game with two players, with the second player being an ai player
+     */
+    public static void resetAi(){
+        data.resetAi();
+    }
+
+    /**
      * Adds a property change listener to receive game state updates.
      * The listener is stored locally and also registered with the game data.
      * 

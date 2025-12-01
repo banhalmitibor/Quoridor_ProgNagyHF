@@ -153,6 +153,32 @@ public class GameData implements Serializable {
         pcs.firePropertyChange("Reset", -1, 0);
     }
 
+
+    /**
+     * Resets the game to its initial state with two players, the second one being ai.
+     * Clears all walls and repositions players to their starting positions.
+     */
+    public void resetAi(){
+        gameWon = false;
+        for (int i = 0; i < 8; i++) {
+            for(int j = 0; j < 8; j++){
+                verticalWalls.get(i).set(j, false);
+                horizontalWalls.get(i).set(j, false);
+            }
+        }
+
+    
+        players = new ArrayList<>();
+        players.add(new PlayerCharecter(4, 8));
+        players.add(new AiCharacter(4, 0));
+        curPlayer = 0;
+
+        pcs.firePropertyChange("Player", -1, 0);
+        pcs.firePropertyChange("Wall", -1, 0);
+        pcs.firePropertyChange("Tile", -1, 0);
+        pcs.firePropertyChange("Reset", -1, 0);
+    }
+
     /**
      * Checks if a player has a valid path to their goal using BFS algorithm.
      * Used to validate wall placements don't completely block a player.
