@@ -17,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import game.Controller;
+import javax.swing.JOptionPane;
 
 /**
  * Menu panel containing game controls and player information.
@@ -123,7 +124,7 @@ public class Menu extends JPanel {
             try {
                 Controller.saveGame((int) saveChooser.getSelectedItem());
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                JOptionPane.showMessageDialog(null, e.getMessage(), "Fájlbeolvasási hiba!", JOptionPane.PLAIN_MESSAGE);
             }
         });
 
@@ -131,7 +132,7 @@ public class Menu extends JPanel {
             try {
                 Controller.loadGame((int) saveChooser.getSelectedItem());
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                JOptionPane.showMessageDialog(null, e.getMessage(), "Fájlbeolvasási hiba!", JOptionPane.PLAIN_MESSAGE);
             }
         });
 

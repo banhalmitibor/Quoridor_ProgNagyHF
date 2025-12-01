@@ -126,7 +126,7 @@ public abstract class Piece implements Serializable{
             pcs.firePropertyChange("wall", wallnum-1, wallnum);
             return true;
         }
-        
+        wallnum--;
         return false;
     }
 
